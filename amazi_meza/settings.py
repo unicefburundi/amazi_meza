@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'amazi_meza_app',
+    'public_administration_structure_app',
 ]
 
 MIDDLEWARE_CLASSES = [
