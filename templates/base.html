@@ -187,17 +187,29 @@
 						<div id="navbar" class="navbar-collapse collapse" aria-expanded="false" style="width:100%; padding-top:10px;">
 							<ul class="nav navbar-nav navbar" style="width:100%">
 								<h1 class="bet-logo">
-									<a href="/">
+									<!--<a href="/">-->
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
 										</div>
-										<div class="col-sm-10 verticallineseparator" style="padding-left:5px; padding-right:5px;">
+										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<span class="brand-app" style="text-align:center;">Amazi meza</span>
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
 											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
 										</div>
-									</a>
+									<!--</a>-->
+									{% if user.is_authenticated %}
+										<div class="col-sm-1" >
+											<li><a role="button" href="{% url 'home' %}">{% trans "Home" %}</a></li>
+										</div>
+										<div class="col-sm-1" >
+											<li><a role="button" href="/logout">{% trans "Logout" %}</a></li>
+										</div>
+									{% else %}
+										<div class="col-sm-1" >
+											<li><a role="button" href="/login">{% trans "Login" %}</a></li>
+										</div>
+									{% endif %}
 								</h1>
 							</ul>
 						</div>
