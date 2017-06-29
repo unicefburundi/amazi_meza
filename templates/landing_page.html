@@ -1,1 +1,57 @@
-<h1>Landing page</h1>
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block container %}
+
+<div>
+	<div class="row">
+		<div class="col-md-12">
+			<img class="noborder size-full aligncenter" src="{% static 'images/source-eau-1.jpg' %}" scale="0">
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-6 sub-page-content">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>{% trans "A propos de Amazi Meza" %}</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 sub-page-content">
+					{% trans "A propos de Amazi Meza" %}
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6 sub-page-content verticallineseparator">
+			<img class="noborder size-full center-block" src="{% static 'images/puiser-eau.jpg' %}" scale="0">
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-md-6 sub-page-content">
+			<img class="noborder size-full center-block" src="{% static 'images/hands-washing.jpg' %}" scale="0">
+		</div>
+		<div class="col-md-6 sub-page-content verticallineseparator">
+			<div class="row">
+				<div class="col-md-12">
+					<h3>{% trans "A propos de Amazi Meza" %}</h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 sub-page-content">
+					{% trans "A propos de Amazi Meza" %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
