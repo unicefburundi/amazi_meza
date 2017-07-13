@@ -130,10 +130,38 @@ def record_commune_level_reporter(args):
         # Let's save the commune level reporter
         CommuneLevelReporters.objects.create(commune = args["concerned_commune"], reporter_phone_number = args['phone'], reporter_name = args['text'].split('#')[1], date_registered = datetime.datetime.now().date())
         args["valide"] = True
-        args["info_to_contact"] = "Vous vous etes bien enregistre"
+        args["info_to_contact"] = "Tu es bien enregistre dans la liste des rapporteurs du niveau communal"
     if(args['text'].split('#')[0].upper() == 'RLRM'):
         args['mot_cle'] = 'REGM'
-        #Here will be written a code for updating a registered commune level reporter
+
+        check_if_is_commune_level_reporter(args)
+        if(args['valide'] is False):
+            # This contact is not a commune level reporter and can't do the update
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+            return
+
+        # Let's check if the message sent is composed by an expected number of values
+        args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+        check_number_of_values(args)
+        if not args['valide']:
+            return
+
+        # Let's check if the code of CDS is valid
+        args["commune_code"] = args['text'].split('#')[2]
+        check_commune_exists(args)
+        if not args['valide']:
+            return
+
+        #Let's update this commune level reporter
+        reporter_set = CommuneLevelReporters.objects.filter(reporter_phone_number = args["phone"])
+        the_concerned_reporter = reporter_set[0]
+        the_concerned_reporter.commune = args["concerned_commune"]
+        the_concerned_reporter.reporter_name = args['text'].split('#')[1]
+        the_concerned_reporter.save()
+        args["valide"] = True
+        args["info_to_contact"] = "Mise a jour reussie"
+
 
 def record_local_reporter(args):
     '''This function is used to record a colline level reporter'''
