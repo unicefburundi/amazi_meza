@@ -20,5 +20,7 @@ admin.site.register(WaterNetWork)
 admin.site.register(WaterSourceEndPoint)
 admin.site.register(ActionsForWaterPointProblem)
 admin.site.register(WaterPointProblem)
+admin.site.register(TemporaryLocalLevelReporter)
+admin.site.register(TemporaryCommuneLevelReporters)
 
 

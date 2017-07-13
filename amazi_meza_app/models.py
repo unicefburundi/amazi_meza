@@ -15,6 +15,17 @@ class LocalLevelReporter(models.Model):
 		return "{0} - {1}".format(self.reporter_name, self.reporter_phone_number)
 
 
+class TemporaryLocalLevelReporter(models.Model):
+	''' This model will be used to temporary store colline level Reporter who doesn't finish his self registration '''
+	reporter_phone_number = models.CharField(max_length=20)
+	reporter_name = models.CharField(max_length=50)
+	date_registered = models.DateTimeField(auto_now_add=True)
+	colline = models.ForeignKey(Colline)
+	
+	def __unicode__(self):
+		return "{0} - {1}".format(self.reporter_name, self.reporter_phone_number)
+
+
 
 class NumberOfWaterPointCommittee(models.Model):
 	''' In this model will be stored reports (from communes)
@@ -146,6 +157,19 @@ class CommuneLevelReporters(models.Model):
 
 	def __unicode__(self):
 		return "{0} - {1} - {2}".format(self.commune, self.reporter_phone_number, self.reporter_name)
+
+
+class TemporaryCommuneLevelReporters(models.Model):
+	''' This model will be used to temporary store commune level Reporter who doesn't finish his self registration '''
+	commune = models.ForeignKey(Commune)
+	reporter_phone_number = models.CharField(max_length=20)
+	reporter_name = models.CharField(max_length=100)
+	date_registered = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return "{0} - {1} - {2}".format(self.commune, self.reporter_phone_number, self.reporter_name)
+
+
 
 class WaterNetWork(models.Model):
 	''' In this model will be stored water networks '''
