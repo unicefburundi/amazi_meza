@@ -92,17 +92,18 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='LOCAL_SELF_REGISTRATION' or incoming_data['message_type']=='LOCAL_SELF_REGISTRATION_M'):
 		#The contact who sent the current message is doing self registration  in the group of reporters
 		#L is local reporter
-		print("1")
 		incoming_data['reporter_category'] = "L"
 		record_local_reporter(incoming_data)
 		
 	if(incoming_data['message_type']=='COMMUNE_LEVEL_SELF_REGISTRATION' or incoming_data['message_type']=='COMMUNE_LEVEL_SELF_REGISTRATION_M'):
 		#The contact who sent the current message is doing self registration  in the group of reporters
 		#C is commune level reporter
-		print("2")
 		incoming_data['reporter_category'] = "C"
 		record_commune_level_reporter(incoming_data)
-		
+
+	if(incoming_data['message_type']=='RECORD_NETWORK' or incoming_data['message_type']=='RECORD_NETWORK_M'):
+		#The contact who sent this message is registering a water network
+		record_water_network(incoming_data)
 
 	if incoming_data['valide'] :
 		#The message have been recorded

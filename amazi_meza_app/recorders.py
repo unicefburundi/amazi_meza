@@ -62,8 +62,8 @@ def check_if_is_commune_level_reporter(args):
     concerned_reporter = CommuneLevelReporters.objects.filter(reporter_phone_number = args['phone'])
     if len(concerned_reporter) > 0:
         args['valide'] = True
-        args['reporter_category'] == "C"
-        one_concerned_reporter = concerned_reporter[0]
+        args['reporter_category'] = "C"
+        args['the_sender'] = concerned_reporter[0]
 
     #The below code will be in the function which checks if someone is amoung recorded
     #local level reporters
@@ -80,7 +80,8 @@ def check_if_is_commune_level_reporter(args):
         args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
         return
 
-    args['the_sender'] = concerned_reporter
+    #args['the_sender'] = concerned_reporter
+    args['the_commune'] = args['the_sender'].commune
     args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
 
 
@@ -101,6 +102,17 @@ def check_commune_exists(args):
             args["info_to_contact"] = "Erreur. Il n y a pas de commune ayant ce code"
             args["valide"] = False
 
+def check_network_registered(args):
+    ''' This function checks if a water network is not already registered in a given commune '''
+    args["water_network_name"] = args['text'].split('#')[1].strip().upper()
+    network_set = WaterNetWork.objects.filter(commune = args['the_commune'], water_network_name = args["water_network_name"])
+    if len(network_set) > 0:
+        args["valide"] = True
+        args["registered_water_nw"] = network_set[0]
+        args["info_to_contact"] = "Ce reseau d eau est enregistre"
+    else:
+        args['valide'] = False
+        args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
 
 def record_commune_level_reporter(args):
     '''This function is used to record a commune level reporter'''
@@ -161,6 +173,36 @@ def record_commune_level_reporter(args):
         the_concerned_reporter.save()
         args["valide"] = True
         args["info_to_contact"] = "Mise a jour reussie"
+
+
+def record_water_network(args):
+    ''' This function is used to record a water networks '''
+
+    args['mot_cle'] = "RLC"
+
+    check_if_is_commune_level_reporter(args)
+    if(args['valide'] is False):
+        # This contact is not a commune level reporter and can't register water network
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    #Let's check if in that commune a water network with that name is not already
+    #registered.
+    check_network_registered(args)
+    if args['valide']:
+        return
+
+    WaterNetWork.objects.create(commune = args['the_commune'], water_network_name = args["water_network_name"], reporter = args['the_sender'], length_of_network = 0)
+    args["valide"] = True
+    args["info_to_contact"] = "Le reseau d eau est bien enregistre"
+
 
 
 def record_local_reporter(args):
