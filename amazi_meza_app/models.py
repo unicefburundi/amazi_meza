@@ -178,9 +178,10 @@ class WaterNetWork(models.Model):
 	reporter = models.ForeignKey(CommuneLevelReporters)
 	date_registered = models.DateTimeField(auto_now_add=True)
 	length_of_network = models.IntegerField()
+	water_network_code = models.CharField(max_length=10)
 
 	def __unicode__(self):
-		return "{0} - {1} - {2} - {3} - {4}".format(self.commune, self.water_network_name, self.length_of_network, self.date_registered, self.reporter)
+		return "Commune : {0}; Name : {1}; length : {2}; Registered : {3}; Registered by : {4}; Code : {5}".format(self.commune, self.water_network_name, self.length_of_network, self.date_registered, self.reporter, self.water_network_code)
 
 
 class WaterSourceEndPoint(models.Model):

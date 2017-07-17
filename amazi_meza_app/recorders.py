@@ -57,7 +57,7 @@ def check_has_already_session(args):
 
 
 def check_if_is_commune_level_reporter(args):
-    ''' This function checks if the contact who sent the current message is a CHW '''
+    ''' This function checks if the contact who sent the current message is a commune level reporter '''
     args['valide'] = False
     concerned_reporter = CommuneLevelReporters.objects.filter(reporter_phone_number = args['phone'])
     if len(concerned_reporter) > 0:
@@ -82,6 +82,26 @@ def check_if_is_commune_level_reporter(args):
 
     #args['the_sender'] = concerned_reporter
     args['the_commune'] = args['the_sender'].commune
+    args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
+
+
+def check_if_is_colline_level_reporter(args):
+    ''' This function checks if the contact who sent the current message is a colline level reporter '''
+    args['valide'] = False
+    concerned_reporter = LocalLevelReporter.objects.filter(reporter_phone_number = args['phone'])
+    if len(concerned_reporter) > 0:
+        args['valide'] = True
+        args['reporter_category'] = "L"
+        args['the_sender'] = concerned_reporter[0]
+
+    if len(concerned_reporter) < 1:
+        # This person is not in the list of reporters
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
+        return
+
+    args['the_colline'] = args['the_sender'].colline
+    args['the_commune'] = args['the_colline'].commune
     args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
 
 
@@ -114,6 +134,22 @@ def check_network_registered(args):
         args['valide'] = False
         args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
 
+def choose_water_network_code(args):
+    ''' This function choose a code to give to a water network '''
+    water_network_name = args['text'].split('#')[2]
+    water_network_code = len(water_network_name)
+
+    code_valide = False
+
+    while not code_valide:
+        water_network_set = WaterNetWork.objects.filter(water_network_code = str(water_network_code))
+        if len(water_network_set) < 1:
+            code_valide = True
+            args['water_network_code'] =  str(water_network_code)
+        else:
+            water_network_code = water_network_code + 1
+
+
 def record_commune_level_reporter(args):
     '''This function is used to record a commune level reporter'''
     if(args['text'].split('#')[0].upper() == 'RLR'):
@@ -133,7 +169,7 @@ def record_commune_level_reporter(args):
         if not args['valide']:
             return
 
-        # Let's check if the code of CDS is valid
+        # Let's check if the code of the commune is valid
         args["commune_code"] = args['text'].split('#')[2]
         check_commune_exists(args)
         if not args['valide']:
@@ -199,12 +235,46 @@ def record_water_network(args):
     if args['valide']:
         return
 
-    WaterNetWork.objects.create(commune = args['the_commune'], water_network_name = args["water_network_name"], reporter = args['the_sender'], length_of_network = 0)
+    #Let's choose a code of this network
+    choose_water_network_code(args)
+
+
+    WaterNetWork.objects.create(commune = args['the_commune'], water_network_name = args["water_network_name"], reporter = args['the_sender'], length_of_network = 0, water_network_code = args['water_network_code'])
     args["valide"] = True
-    args["info_to_contact"] = "Le reseau d eau est bien enregistre"
+    args["info_to_contact"] = "Le reseau d eau est bien enregistre. Son code est : "+args['water_network_code']
 
 
 
 def record_local_reporter(args):
     '''This function is used to record a colline level reporter'''
-    pass
+
+    if(args['text'].split('#')[0].upper() == 'RL'):
+        #This contact is doing registration not an update
+        args['mot_cle'] = "RL"
+
+        check_if_is_colline_level_reporter(args)
+        if(args['valide'] is True):
+            # This contact is already a colline level reporter and can't do the registration the second time
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message de modification d enregistrement"
+            return
+
+        # Let's check if the message sent is composed by an expected number of values
+        args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+        check_number_of_values(args)
+        if not args['valide']:
+            return
+
+        # Let's check if the code of the commune is valid
+        args["commune_code"] = args['text'].split('#')[1]
+        check_commune_exists(args)
+        if not args['valide']:
+            return
+
+
+
+    if(args['text'].split('#')[0].upper() == 'RLM'):
+        #This contact is doing an update
+        args['mot_cle'] = "RLM"
+
+        #Write hear the code for doing an update
