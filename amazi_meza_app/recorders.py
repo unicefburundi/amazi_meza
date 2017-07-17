@@ -129,14 +129,14 @@ def check_network_registered(args):
     if len(network_set) > 0:
         args["valide"] = True
         args["registered_water_nw"] = network_set[0]
-        args["info_to_contact"] = "Ce reseau d eau est enregistre"
+        args["info_to_contact"] = "Ce reseau d eau est deja enregistre"
     else:
         args['valide'] = False
         args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
 
 def choose_water_network_code(args):
     ''' This function choose a code to give to a water network '''
-    water_network_name = args['text'].split('#')[2]
+    water_network_name = args['text'].split('#')[1]
     water_network_code = len(water_network_name)
 
     code_valide = False
@@ -265,7 +265,7 @@ def record_local_reporter(args):
         if not args['valide']:
             return
 
-        # Let's check if the code of the commune is valid
+        # Let's check if the name of the commune is valid
         args["commune_code"] = args['text'].split('#')[1]
         check_commune_exists(args)
         if not args['valide']:
