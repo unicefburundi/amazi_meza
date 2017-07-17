@@ -122,6 +122,21 @@ def check_commune_exists(args):
             args["info_to_contact"] = "Erreur. Il n y a pas de commune ayant ce code"
             args["valide"] = False
 
+def check_commune_colline_names_valide(args):
+    ''' This function checks if the commune and the colline names are valid '''
+    commune_name = args["commune_name"].upper()
+    colline_name = args["colline_name"].upper()
+
+    colline_set = Colline.objects.filter(name__iexact= colline_name, commune__name__iexact= commune_name)
+    if len(colline_set) > 0:
+        args["concerned_colline"] = colline_set[0]
+        args["valide"] = True
+        args["info_to_contact"] = "Il y a la colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+    else:
+        args["info_to_contact"] = "Erreur. Il n y a pas de colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+        args["valide"] = False
+
+
 def check_network_registered(args):
     ''' This function checks if a water network is not already registered in a given commune '''
     args["water_network_name"] = args['text'].split('#')[1].strip().upper()
@@ -133,6 +148,52 @@ def check_network_registered(args):
     else:
         args['valide'] = False
         args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
+
+def check_water_network_code_valid(args):
+    ''' This function checks if the water network code sent exits in a given colline '''
+    water_network_code = args["water_network_code"]
+
+    water_network_set = WaterNetWork.objects.filter(commune = args["concerned_colline"].commune, water_network_code = args["water_network_code"])
+
+    if len(water_network_set) > 0:
+        args["valide"] = True
+        args["concerned_water_network"] = water_network_set[0]
+        args["info_to_contact"] = "Le reseau d eau indique est bien indentifie"
+    else:
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. Il n y a pas de reseau '"+args["water_network_code"]+"' enregistre dans la commune '"+args["concerned_colline"].commune.name+"'"
+
+
+def check_water_point_name_unique_in_colline(args):
+    ''' This function checks if a water point name given is not already registered '''
+
+    water_point_name = args["water_point_name"]
+
+    water_point_set = WaterSourceEndPoint.objects.filter(colline = args["concerned_colline"], water_point_name__iexact = water_point_name)
+
+    if len(water_point_set) > 0:
+        args["valide"] = True
+        args["info_to_contact"] = "Erreur. Le point d eau '"+water_point_name.upper()+"' est deja enregistre dans la colline '"+args["concerned_colline"].name.upper()+"'"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Le point d eau nomme '"+water_point_name.upper()+"' n est pas encore enregistre dans la colline '"+args["concerned_colline"].name.upper()+"'"
+
+def check_water_point_type_exists(args):
+    ''' This function checks if the water point type sent is valid '''
+
+    water_point_type = args["water_point_type"]
+
+    water_point_type_set = WaterPointType.objects.filter(name__iexact = water_point_type)
+
+    if len(water_point_type_set) > 0:
+        args["valide"] = True
+        args["concerned_water_point_type"] = water_point_type_set[0]
+        args["info_to_contact"] = "Le type du point d eau indique est reconnu"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Le type du point d eau indique n est pas reconnu"
+
+
 
 def choose_water_network_code(args):
     ''' This function choose a code to give to a water network '''
@@ -265,13 +326,38 @@ def record_local_reporter(args):
         if not args['valide']:
             return
 
-        # Let's check if the name of the commune is valid
-        args["commune_code"] = args['text'].split('#')[1]
-        check_commune_exists(args)
+        # Let's check if names of commune and colline are valid
+        args["commune_name"] = args['text'].split('#')[1]
+        args["colline_name"] = args['text'].split('#')[2]
+        check_commune_colline_names_valide(args)
         if not args['valide']:
             return
 
+        #Let's check if the code of water network is valid
+        args["water_network_code"] = args['text'].split('#')[3]
+        check_water_network_code_valid(args)
+        if not args['valide']:
+            return
 
+        args["reporter_name"] =  args['text'].split('#')[3].capitalize()
+
+        #Let's check if the water point name given is unique in that colline
+        args["water_point_name"] = args['text'].split('#')[5].upper()
+        check_water_point_name_unique_in_colline(args)
+        if args['valide']:
+            return
+
+        #Let's check if the indicated water point type is valid
+        args["water_point_type"] = args['text'].split('#')[6]
+        check_water_point_type_exists(args)
+        if not args['valide']:
+            return
+
+        #Let's record the reporter
+        reporter = LocalLevelReporter.objects.create(reporter_phone_number = args['phone'], reporter_name = args["reporter_name"], colline = args["concerned_colline"])
+        WaterSourceEndPoint.objects.create(water_point_name = args["water_point_name"], water_point_type = args["concerned_water_point_type"], colline = args["concerned_colline"], network = args["concerned_water_network"], reporter = reporter)
+
+        args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
 
     if(args['text'].split('#')[0].upper() == 'RLM'):
         #This contact is doing an update
