@@ -105,6 +105,10 @@ def handel_rapidpro_request(request):
 		#The contact who sent this message is registering a water network
 		record_water_network(incoming_data)
 
+	if(incoming_data['message_type']=='REPORT_PROBLEM'):
+		#The contact who sent this message is reporting a water point problem
+		record_problem_report(incoming_data)
+
 	if incoming_data['valide'] :
 		#The message have been recorded
 		response['ok'] = True

@@ -3,6 +3,7 @@ from amazi_meza_app.models import *
 
 import datetime
 from django.conf import settings
+import re
 
 def check_colline(args):
     ''' This function checks if the colline name sent by the reporter exists '''
@@ -193,7 +194,49 @@ def check_water_point_type_exists(args):
         args["valide"] = False
         args["info_to_contact"] = "Le type du point d eau indique n est pas reconnu"
 
+def check_w_p_problem_category_valid(args):
+    ''' This function checks if the water point problem category sent is valid '''
 
+    w_p_problem_type = args["problem_category"]
+
+    w_p_problem_type_set = WaterPointProblemTypes.objects.filter(problem_type_name__iexact = w_p_problem_type)
+
+    if len(w_p_problem_type_set) > 0:
+        args["valide"] = True
+        args["concerned_w_p_pbm_type"] = w_p_problem_type_set[0]
+        args["info_to_contact"] = "Le type de probleme envoye est reconnu"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Erreur. Le type de probleme envoye n est pas reconnu"
+
+def check_action_taken_valid(args):
+    ''' This function checks if the action taken sent is valid '''
+
+    action_taken = args["action_taken"]
+
+    action_taken_set = ActionsForWaterPointProblem.objects.filter(action_code__iexact = action_taken)
+
+    if len(action_taken_set) > 0:
+        args["valide"] = True
+        args["concerned_action_taken"] = action_taken_set[0]
+        args["info_to_contact"] = "Votre action face au probleme est reconnu"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Erreur. Votre action face a ce probleme de point d eau n est pas reconnu"
+
+def check_number_of_days_valid(args):
+    ''' This function checks if the number of days sent is valid '''
+
+    number_of_days = args["number_of_days"]
+
+    expression = r'^[0-9]+$'
+
+    if re.search(expression, number_of_days) is None:
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. Le nombre de jours envoye n est pas valide"
+    else:
+        args['valide'] = True
+        args["info_to_contact"] = "Le nombre de jours envoye est valide"
 
 def choose_water_network_code(args):
     ''' This function choose a code to give to a water network '''
@@ -364,3 +407,53 @@ def record_local_reporter(args):
         args['mot_cle'] = "RLM"
 
         #Write hear the code for doing an update
+
+
+
+def record_problem_report(args):
+    ''' This function is used to record a water point problem '''
+
+    args['mot_cle'] = "RP"
+
+    check_if_is_colline_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a colline level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    #Let's check if the problem category sent is valid
+    args["problem_category"] = args['text'].split('#')[1]
+    check_w_p_problem_category_valid(args)
+    if not args['valide']:
+        return
+
+    #Let's check if the number of days sent is valid
+    args["number_of_days"] = args['text'].split('#')[2]
+    check_number_of_days_valid(args)
+    if not args['valide']:
+        return
+
+    #Let's check if the action taken sent is valid
+    args["action_taken"] = args['text'].split('#')[3]
+    check_action_taken_valid(args)
+    if not args['valide']:
+        return
+
+    #The value at the position 4 should be yes or not
+    if(args['text'].split('#')[4].upper() != "YES" and  args['text'].split('#')[4].upper() != "NO"):
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'YES' ou 'NO'"
+        return
+
+    #The value at the position 4 should be yes or not
+    if(args['text'].split('#')[5].upper() != "YES" and  args['text'].split('#')[5].upper() != "NO"):
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'YES' ou 'NO'"
+        return
