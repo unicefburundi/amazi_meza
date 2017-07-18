@@ -617,6 +617,14 @@ def record_beneficaries_first_month(args):
     if not args['valide']:
         return
 
+    #A such report must be sent once per a given commune.
+    #Then, let's check if it was not already sent
+    wpc_set = NumberOfWaterPointCommittee.objects.filter(commune = args['the_commune'])
+    if(len(wpc_set) > 0):
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+        return
+
 
     NumberOfWaterPointCommittee.objects.create(commune = args['the_commune'], number_of_water_point_committees = args['number_of_water_point_committees'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
 
