@@ -105,6 +105,18 @@ def check_if_is_colline_level_reporter(args):
     args['the_commune'] = args['the_colline'].commune
     args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
 
+def identify_water_point(args):
+    ''' This function identify a water point a given reporter reports for '''
+
+    water_point_set = WaterSourceEndPoint.objects.filter(reporter = args['the_sender'])
+
+    if len(water_point_set) > 0:
+        args['valide'] = True
+        args['concerned_water_point'] = water_point_set[0]
+        args['info_to_contact'] = "Le point d eau concerne est reconnu"
+    else:
+        args['valide'] = False
+        args['info_to_contact'] = "Le point d eau pour lequel vous rapportez n est pas reconnu"
 
 def check_commune_exists(args):
     ''' This function checks if the commune exists '''
@@ -428,6 +440,11 @@ def record_problem_report(args):
     if not args['valide']:
         return
 
+    #Let's identify the water point this reporter reports for
+    identify_water_point(args)
+    if not args['valide']:
+        return
+
     #Let's check if the problem category sent is valid
     args["problem_category"] = args['text'].split('#')[1]
     check_w_p_problem_category_valid(args)
@@ -439,6 +456,7 @@ def record_problem_report(args):
     check_number_of_days_valid(args)
     if not args['valide']:
         return
+    args["number_of_days"] = int(args["number_of_days"])
 
     #Let's check if the action taken sent is valid
     args["action_taken"] = args['text'].split('#')[3]
@@ -451,9 +469,24 @@ def record_problem_report(args):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'YES' ou 'NO'"
         return
+    if(args['text'].split('#')[4].upper() != "YES"):
+        args['problem_solved'] = True
+    else:
+        args['problem_solved']  = False
+
 
     #The value at the position 4 should be yes or not
     if(args['text'].split('#')[5].upper() != "YES" and  args['text'].split('#')[5].upper() != "NO"):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'YES' ou 'NO'"
         return
+    if(args['text'].split('#')[5].upper() != "YES"):
+        args['is_there_diarrhea_case'] = True
+    else:
+        args['is_there_diarrhea_case'] = False
+
+
+    #Let's record the problem report
+    WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'])
+
+    args['info_to_contact'] = "Le rapport est bien recu"
