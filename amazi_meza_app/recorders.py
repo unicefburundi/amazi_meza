@@ -250,6 +250,55 @@ def check_number_of_days_valid(args):
         args['valide'] = True
         args["info_to_contact"] = "Le nombre de jours envoye est valide"
 
+def check_is_number(args):
+    ''' This function checks if a given number is a valid number '''
+
+    number_to_check = args['number_to_check']
+
+    expression = r'^[0-9]+$'
+
+    if re.search(expression, number_to_check) is None:
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+    else:
+        args['valide'] = True
+        args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+
+def check_is_not_future_year(args):
+    ''' This function cheks if the year sent is not a future year '''
+
+    value_to_check = int(args['value_to_check'])
+
+    current_year = datetime.datetime.now().year
+
+    if(value_to_check > current_year):
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre une annee futur"
+        return
+    if(args['lower_limit']):
+        if(value_to_check < args['lower_limit']):
+            args['valide'] = False
+            args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre inferieure a '"+str(args['lower_limit'])+"'"
+            return
+
+
+    args['valide'] = True
+    args["info_to_contact"] = "'"+args['value_meaning']+"' est valide"
+
+
+def check_month_between_1_12(args):
+    ''' This function cheks if the month sent is between one and 12 '''
+
+    value_to_check = int(args['value_to_check'])
+
+    if((value_to_check < 1) or (value_to_check > 12)):
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. La valeur de '"+args['value_meaning']+"' doit etre entre 1 et 12"
+    else:
+        args['valide'] = True
+        args["info_to_contact"] = "La valeur de '"+args['value_meaning']+"' est entre 1 et 12"
+
+
 def choose_water_network_code(args):
     ''' This function choose a code to give to a water network '''
     water_network_name = args['text'].split('#')[1]
@@ -489,4 +538,88 @@ def record_problem_report(args):
     #Let's record the problem report
     WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'])
 
-    args['info_to_contact'] = "Le rapport est bien recu"
+    args['info_to_contact'] = "Le rapport de panne est bien recu"
+
+
+
+def record_beneficaries_first_month(args):
+    ''' This function is used to record beneficiaries at commune level in the first month '''
+
+    args['mot_cle'] = "RPC"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    #Let's check if value sent for number of water point commities is valid
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Nombre des commites des points d eau"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['number_of_water_point_committees'] = int(args['number_to_check'])
+
+    #Let's check if value sent for number of households is valid
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Nombre de menages"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['number_of_households'] = int(args['number_to_check'])
+
+    #Let's check if value sent for number of vulnerable households is valid
+    args['number_to_check'] = args['text'].split('#')[3]
+    args['value_meaning'] = "Nombre de menages vulnerables"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['number_of_vulnerable_households'] = int(args['number_to_check'])
+
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[4]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if the reporting year is valid. It is the year concerned by the report.
+    #It's not the year this report is sent. It may be past year or current. Not future.
+    args['value_to_check'] = args['text'].split('#')[4]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    args['lower_limit'] = 2017
+    check_is_not_future_year(args)
+    if not args['valide']:
+        return
+
+    #Let's check if value sent for reporting month is an int
+    args['number_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_month'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for reporting month is between 1 and 12
+    args['value_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_month_between_1_12(args)
+    if not args['valide']:
+        return
+
+
+    NumberOfWaterPointCommittee.objects.create(commune = args['the_commune'], number_of_water_point_committees = args['number_of_water_point_committees'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+
+    NumberOfHouseHold.objects.create(commune = args['the_commune'], number_of_house_holds = args['number_of_households'], number_of_vulnerable_house_holds = args['number_of_vulnerable_households'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+
+    args['info_to_contact'] = "Le rapport sur les commites des points d eau et sur les menages est bien recu"

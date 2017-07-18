@@ -108,6 +108,14 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='REPORT_PROBLEM'):
 		#The contact who sent this message is reporting a water point problem
 		record_problem_report(incoming_data)
+	if(incoming_data['message_type']=='REPORT_BENEFICIARIES_BASE'):
+		#The contact who sent this message is doing the first report on beneficiaries
+		record_beneficaries_first_month(incoming_data)
+
+
+
+
+
 
 	if incoming_data['valide'] :
 		#The message have been recorded
