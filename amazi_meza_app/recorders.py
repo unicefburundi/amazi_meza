@@ -714,20 +714,18 @@ def record_water_sources_points(args):
 
     #A such report must be sent once per a given commune.
     #Then, let's check if it was not already sent
-    nwp_set = NumberOfWaterSourceEndPoint.objects.filter(commune = args['the_commune'])
+    nwp_set = NumberOfWaterSourceEndPoint.objects.filter(commune = args['the_commune'], report_type = "EXISTING")
     if(len(nwp_set) > 0):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
         return
-
-    #number_of_wp_types = len(args['text'].split('#')) - 3
 
     for i in range(1,number_of_wp_types+1):
         wpt_set = WaterPointType.objects.filter(priority = i)
         number = args['text'].split('#')[i]
         if(len(wpt_set) > 0):
             wpt = wpt_set[0]
-            NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, functional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+            NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "EXISTING")
         else:
             args['valide'] = False
             args['info_to_contact'] = "Erreur"
@@ -806,7 +804,7 @@ def record_additional_water_sources_points(args):
         number = args['text'].split('#')[i]
         if(len(wpt_set) > 0):
             wpt = wpt_set[0]
-            NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, functional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+            NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, functional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "FUNCTIONAL")
         else:
             args['valide'] = False
             args['info_to_contact'] = "Erreur"
