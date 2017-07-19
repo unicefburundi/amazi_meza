@@ -140,6 +140,7 @@ class NumberOfWaterSourceEndPoint(models.Model):
 	commune = models.ForeignKey(Commune)
 	water_point_type = models.ForeignKey(WaterPointType)
 	existing_number = models.IntegerField(null=True)
+	additional_number = models.IntegerField(null=True)
 	functional_number = models.IntegerField(null=True)
 	reporting_year = models.IntegerField()
 	reporting_month = models.IntegerField()
@@ -147,7 +148,7 @@ class NumberOfWaterSourceEndPoint(models.Model):
 	report_type = models.CharField(max_length=50)
 
 	def __unicode__(self):
-		return "{0} - {1} - {2} - {3} - {4} - {5}".format(self.commune, self.reporting_month, self.reporting_year, self.water_point_type, self.existing_number, self.functional_number)
+		return "{0} - {1} - {2} - {3} - {4} - {5} - {6}".format(self.commune, self.reporting_month, self.reporting_year, self.water_point_type, self.existing_number, self.additional_number, self.functional_number)
 
 
 class CommuneLevelReporters(models.Model):
