@@ -112,8 +112,11 @@ def handel_rapidpro_request(request):
 		#The contact who sent this message is doing the first report on beneficiaries
 		record_beneficaries_first_month(incoming_data)
 	if(incoming_data['message_type']=='REPORT_WATER_SOURCES_POINTS'):
-		#The contact who sent this message is doing the first report on beneficiaries
+		#The contact who sent this message is doing the first report on number of water sources points
 		record_water_sources_points(incoming_data)
+	if(incoming_data['message_type']=='REPORT_ADDITIONAL_WATER_SOURCES_POINTS'):
+		#The contact who sent this message is doing a report on number of water sources points
+		record_additional_water_sources_points(incoming_data)
 
 
 
