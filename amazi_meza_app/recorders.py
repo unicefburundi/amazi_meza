@@ -264,6 +264,24 @@ def check_is_number(args):
         args['valide'] = True
         args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
 
+
+def check_number_is_int(args):
+    ''' This function checks if the number at the indicated position is an int '''
+
+    indicated_position = args['number_position']
+    number_to_check = args['text'].split('#')[indicated_position]
+
+    expression = r'^[0-9]+$'
+
+    if re.search(expression, number_to_check) is None:
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. La valeur en position '"+str(indicated_position)+"' n est pas valide"
+    else:
+        args['valide'] = True
+        args["info_to_contact"] = "La valeur en position '"+str(indicated_position)+"' est valide"
+
+
+
 def check_is_not_future_year(args):
     ''' This function cheks if the year sent is not a future year '''
 
@@ -631,3 +649,90 @@ def record_beneficaries_first_month(args):
     NumberOfHouseHold.objects.create(commune = args['the_commune'], number_of_house_holds = args['number_of_households'], number_of_vulnerable_house_holds = args['number_of_vulnerable_households'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
 
     args['info_to_contact'] = "Le rapport sur les commites des points d eau et sur les menages est bien recu"
+
+
+def record_water_sources_points(args):
+    ''' This function is used to record number of water sources and water points at commune level in the first month '''
+
+    args['mot_cle'] = "RWP"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    number_of_wp_types = len(args['text'].split('#')) - 3
+
+    for i in range(1,number_of_wp_types):
+        args['number_position'] = i
+        check_number_is_int(args)
+        if not args['valide']:
+            break
+
+    if not args['valide']:
+        return
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if the reporting year is valid. It is the year concerned by the report.
+    #It's not the year this report is sent. It may be past year or current. Not future.
+    args['value_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    args['lower_limit'] = 2017
+    check_is_not_future_year(args)
+    if not args['valide']:
+        return
+
+    #Let's check if value sent for reporting month is an int
+    args['number_to_check'] = args['text'].split('#')[6]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_month'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for reporting month is between 1 and 12
+    args['value_to_check'] = args['text'].split('#')[6]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_month_between_1_12(args)
+    if not args['valide']:
+        return
+
+    #A such report must be sent once per a given commune.
+    #Then, let's check if it was not already sent
+    nwp_set = NumberOfWaterSourceEndPoint.objects.filter(commune = args['the_commune'])
+    if(len(nwp_set) > 0):
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+        return
+
+    #number_of_wp_types = len(args['text'].split('#')) - 3
+
+    for i in range(1,number_of_wp_types+1):
+        print(i)
+        wpt_set = WaterPointType.objects.filter(priority = i)
+        number = args['text'].split('#')[i]
+        if(len(wpt_set) > 0):
+            wpt = wpt_set[0]
+            NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, functional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+        else:
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur"
+            break
+
+    if args['valide']:
+        args['info_to_contact'] = "Le rapport concernant les points d eau existants est bien recu"
