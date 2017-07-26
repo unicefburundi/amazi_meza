@@ -954,6 +954,7 @@ def record_annual_budget(args):
         else:
             args['valide'] = True
             one_budget_row.annual_badget = args['annual_budget']
+            one_budget_row.save()
             args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
             return
 
@@ -981,6 +982,43 @@ def record_expected_expenditure(args):
     check_number_of_values(args)
     if not args['valide']:
         return
+
+    #Let's check if value sent for expected annual expenditure is an int
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Prevision des depenses annuelles"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['expected_annual_expenditure'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_year(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if this report is not already given
+    budget_set = ExpectedBudgetExpenditureAndAnnualBudget.objects.filter(commune = args['the_commune'], reporting_year = args['reporting_year'])
+    if(len(budget_set) > 0):
+        one_budget_row = budget_set[0]
+        if(one_budget_row.expected_annual_expenditure):
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            return
+        else:
+            args['valide'] = True
+            one_budget_row.expected_annual_expenditure = args['expected_annual_expenditure']
+            one_budget_row.save()
+            args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+            return
+
+    ExpectedBudgetExpenditureAndAnnualBudget.objects.create(commune = args['the_commune'], expected_annual_expenditure = args['expected_annual_expenditure'], reporting_year = args['reporting_year'])
+
+
+    args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+
 
 
 def record_income_money(args):
