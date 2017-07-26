@@ -1039,6 +1039,49 @@ def record_income_money(args):
     if not args['valide']:
         return
 
+    #Let's check if the value sent for amount collected is an int
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Montant collecte"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['amount_collected'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_year(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting month is an int
+    args['number_to_check'] = args['text'].split('#')[3]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_month'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for reporting month is between 1 and 12
+    args['value_to_check'] = args['text'].split('#')[3]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_month_between_1_12(args)
+    if not args['valide']:
+        return
+
+
+    monthly_income_set = MonthlyIncome.objects.filter(commune = args['the_commune'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+
+    if(len(monthly_income_set) > 0):
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le montant collecte pendant cette periode"
+        return
+    else:
+        MonthlyIncome.objects.create(commune = args['the_commune'], total_income = args['amount_collected'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+        args['info_to_contact'] = "Le rapport de montant collecte est bien recu"
+
+
 def record_expenditure(args):
     ''' This function is used to record expenditure '''
 
