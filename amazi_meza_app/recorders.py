@@ -23,6 +23,7 @@ def check_number_of_values(args):
     expected_number_of_values_string = args["expected_number_of_values"]
     expected_number_of_values_int = int(expected_number_of_values_string)
 
+
     if len(args['text'].split('#')) < expected_number_of_values_int:
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
@@ -1100,4 +1101,83 @@ def record_expenditure(args):
     if not args['valide']:
         return
 
+    #Let's check if the value sent for Amount spent on Services and Repairs is an int
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Montant depense pour les reparations"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['amount_spend_on_repairs'] = int(args['number_to_check'])
 
+
+    #Let's check if the value sent for Amount spent on Equipment and logistics is an int
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Montant depense pour les Equipments"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['amount_spend_on_equipments'] = int(args['number_to_check'])
+
+
+    #Let's check if the value sent for Amount spent on Salaries is an int
+    args['number_to_check'] = args['text'].split('#')[3]
+    args['value_meaning'] = "Montant depense pour les salaires"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['amount_spend_on_salaries'] = int(args['number_to_check'])
+
+
+    #Let's check if the Amount spent on Administrative costs is an int
+    args['number_to_check'] = args['text'].split('#')[4]
+    args['value_meaning'] = "Montant depense pour l administration"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['amount_spend_on_administrations'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_year(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting month is an int
+    args['number_to_check'] = args['text'].split('#')[6]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_month'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for reporting month is between 1 and 12
+    args['value_to_check'] = args['text'].split('#')[6]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_month_between_1_12(args)
+    if not args['valide']:
+        return
+
+    expenditure_set = MonthlyExpenditure.objects.filter(commune = args['the_commune'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+
+    if len(expenditure_set) > 0:
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des depenses pour cette periode"
+        return
+    else:
+        number_of_expensy_types = len(args['text'].split('#')) - 3
+
+        for i in range(1,number_of_expensy_types+1):
+            expensy_type_set = ExpenditureCategory.objects.filter(priority = i)
+            number = int(args['text'].split('#')[i])
+            if(len(expensy_type_set) > 0):
+                exp_t = expensy_type_set[0]
+                MonthlyExpenditure.objects.create(commune = args['the_commune'], expenditure = exp_t, expenditure_amount = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+            else:
+                args['valide'] = False
+                args['info_to_contact'] = "Erreur"
+                break
+
+    if args['valide']:
+        args['info_to_contact'] = "Le rapport concernant les depenses est bien recu"

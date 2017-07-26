@@ -90,9 +90,10 @@ class MonthlyIncome(models.Model):
 class ExpenditureCategory(models.Model):
 	''' In this model will be stored categories of expenditures '''
 	expenditure_category_name = models.CharField(max_length=100)
+	priority = models.IntegerField(default=1, help_text="La plus petite valeur est 1")
 
 	def __unicode__(self):
-		return "{0}".format(self.expenditure_category_name)
+		return "{0} Priorite {1}".format(self.expenditure_category_name, self.priority)
 
 class MonthlyExpenditure(models.Model):
 	''' In this model will be stored reports (from communes)
