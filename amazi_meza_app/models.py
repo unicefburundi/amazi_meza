@@ -57,15 +57,16 @@ class NumberOfHouseHold(models.Model):
 class WaterNetworkProblemType(models.Model):
 	''' In this model will be stored names of water networks problems types '''
 	water_network_problem_type_name = models.CharField(max_length=100)
+	water_network_problem_code = models.CharField(max_length=10)
 
 	def __unicode__(self):
-		return "{0}".format(self.water_network_problem_type_name)
+		return "{0} code {1}".format(self.water_network_problem_type_name, self.water_network_problem_code)
 
 class NumberOfWaterNetworkProblems(models.Model):
 	''' In this model will be stored reports (from communes)
 	about water network problems '''
 	commune = models.ForeignKey(Commune)
-	water_network_problem_type = models.ForeignKey(WaterNetworkProblemType)
+	most_frequent_water_network_problem_type = models.ForeignKey(WaterNetworkProblemType)
 	number_of_water_network_problems = models.IntegerField()
 	number_of_days = models.IntegerField()
 	reporting_year = models.IntegerField()
@@ -73,7 +74,7 @@ class NumberOfWaterNetworkProblems(models.Model):
 	reception_date = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
-		return "{0} - {1} - {2} - {3} - {4}".format(self.commune, self.reporting_month, self.reporting_year, self.water_network_problem_type, self.number_of_water_network_problems)
+		return "{0} - {1} - {2} - {3} - {4}".format(self.commune, self.reporting_month, self.reporting_year, self.most_frequent_water_network_problem_type, self.number_of_water_network_problems)
 
 class MonthlyIncome(models.Model):
 	''' In this model will be stored reports (from communes)

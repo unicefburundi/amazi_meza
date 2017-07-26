@@ -132,6 +132,10 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='REPORT_EXPENDITURE'):
 		#The contact who sent this message is doing a report of expenditure
 		record_expenditure(incoming_data)
+	if(incoming_data['message_type']=='NETWORK_PROBLEM'):
+		#The contact who sent this message is doing a report of a network problem
+		record_network_problem(incoming_data)
+
 
 
 

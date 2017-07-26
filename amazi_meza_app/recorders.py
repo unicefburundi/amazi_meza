@@ -222,6 +222,23 @@ def check_w_p_problem_category_valid(args):
         args["valide"] = False
         args["info_to_contact"] = "Erreur. Le type de probleme envoye n est pas reconnu"
 
+def check_water_network_problem_type(args):
+    ''' This function checks if the water network problem category sent is valid '''
+
+    network_problem_type_code = args['network_problem_type_code']
+
+    network_problem_type_set = WaterNetworkProblemType.objects.filter(water_network_problem_code__iexact = network_problem_type_code)
+
+    if len(network_problem_type_set) > 0:
+        args["valide"] = True
+        args["concerned_w_network_pbm_type"] = network_problem_type_set[0]
+        args["info_to_contact"] = "Le type de probleme du reseau d eau envoye est reconnu"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Erreur. Le type de probleme du reseau d eau envoye n est pas reconnu"
+
+
+
 def check_action_taken_valid(args):
     ''' This function checks if the action taken sent is valid '''
 
@@ -1181,3 +1198,82 @@ def record_expenditure(args):
 
     if args['valide']:
         args['info_to_contact'] = "Le rapport concernant les depenses est bien recu"
+
+
+
+def record_network_problem(args):
+    ''' This function is used to record network problems '''
+
+    args['mot_cle'] = "RNP"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    #Let's check if the value sent for number of network problems is an int
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Nombre de pannes sur le reseau"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['nb_de_pannes_sur_le_reseau'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for days the problem lasted is an int
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Nombre de jours que le reseau est en panne"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['nb_de_jours_reseau_en_panne'] = int(args['number_to_check'])
+
+    #Let's check if the network type sent is valid
+    args['network_problem_type_code'] = args['text'].split('#')[3]
+    check_water_network_problem_type(args)
+    if not args['valide']:
+        return
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[4]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_year(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting month is an int
+    args['number_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['reporting_month'] = int(args['number_to_check'])
+
+    #Let's check if the value sent for reporting month is between 1 and 12
+    args['value_to_check'] = args['text'].split('#')[5]
+    args['value_meaning'] = "Moi concerne par le rapport"
+    check_month_between_1_12(args)
+    if not args['valide']:
+        return
+
+
+
+    water_network_problem_set = NumberOfWaterNetworkProblems.objects.filter(commune = args['the_commune'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+
+    if len(water_network_problem_set) > 0:
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des problemes des reseaux d eau pour cette periode"
+        return
+
+    NumberOfWaterNetworkProblems.objects.create(commune = args['the_commune'], most_frequent_water_network_problem_type = args["concerned_w_network_pbm_type"], number_of_water_network_problems = args['nb_de_pannes_sur_le_reseau'], number_of_days = args['nb_de_jours_reseau_en_panne'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
+    args['info_to_contact'] = "Le rapport concernant les problemes des reseaux d eau est bien recu"
+
+
