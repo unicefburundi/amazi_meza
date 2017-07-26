@@ -120,6 +120,19 @@ def handel_rapidpro_request(request):
 	if(incoming_data['message_type']=='REPORT_FUNCTIONAL_WATER_SOURCES_POINTS'):
 		#The contact who sent this message is doing a report on number of functional water sources points
 		record_functional_water_sources_points(incoming_data)
+	if(incoming_data['message_type']=='REPORT_ANNUAL_BUDGET'):
+		#The contact who sent this message is doing a report of annual budget
+		record_annual_budget(incoming_data)
+	if(incoming_data['message_type']=='REPORT_EXPECTED_EXPENDITURE'):
+		#The contact who sent this message is doing a report of expected expenditure
+		record_expected_expenditure(incoming_data)
+	if(incoming_data['message_type']=='REPORT_INCOME'):
+		#The contact who sent this message is doing a report of income money
+		record_income_money(incoming_data)
+	if(incoming_data['message_type']=='REPORT_EXPENDITURE'):
+		#The contact who sent this message is doing a report of expenditure
+		record_expenditure(incoming_data)
+
 
 
 

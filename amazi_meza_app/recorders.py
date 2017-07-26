@@ -890,3 +890,82 @@ def record_functional_water_sources_points(args):
 
     if args['valide']:
         args['info_to_contact'] = "Le rapport concernant le fonctionnement des points d eau est bien recu"
+
+
+
+
+def record_annual_budget(args):
+    ''' This function is used to record annual budget '''
+
+    args['mot_cle'] = "RBB"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+
+def record_expected_expenditure(args):
+    ''' This function is used to record expected expenditure '''
+
+    args['mot_cle'] = "RBE"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+
+def record_income_money(args):
+    ''' This function is used to record income money '''
+
+    args['mot_cle'] = "RCI"
+    
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+def record_expenditure(args):
+    ''' This function is used to record expenditure '''
+
+    args['mot_cle'] = "RCI"
+
+    check_if_is_commune_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a commune level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    
