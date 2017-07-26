@@ -111,8 +111,8 @@ class ExpectedBudgetExpenditureAndAnnualBudget(models.Model):
 	''' In this model will be stored reports (from communes) 
 	about expected annual expenditure and annual budget '''
 	commune = models.ForeignKey(Commune)
-	annual_badget = models.IntegerField()
-	expected_annual_expenditure = models.IntegerField()
+	annual_badget = models.IntegerField(null=True)
+	expected_annual_expenditure = models.IntegerField(null=True)
 	reporting_year = models.IntegerField()
 	reception_date = models.DateTimeField(auto_now_add=True)
 

@@ -265,6 +265,21 @@ def check_is_number(args):
         args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
 
 
+def check_is_year(args):
+    ''' This function checks if a given number is a year '''
+
+    number_to_check = args['number_to_check']
+
+    expression = r'^[0-9]{4}$'
+
+    if re.search(expression, number_to_check) is None:
+        args['valide'] = False
+        args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+    else:
+        args['valide'] = True
+        args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+
+
 def check_number_is_int(args):
     ''' This function checks if the number at the indicated position is an int '''
 
@@ -912,6 +927,42 @@ def record_annual_budget(args):
     if not args['valide']:
         return
 
+    #Let's check if value sent for budget amount is an int
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Budget annuel"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['annual_budget'] = int(args['number_to_check'])
+
+    #Let's check if value sent for reporting year is an int
+    args['number_to_check'] = args['text'].split('#')[2]
+    args['value_meaning'] = "Annee concernee par le rapport"
+    check_is_year(args)
+    if not args['valide']:
+        return
+    args['reporting_year'] = int(args['number_to_check'])
+
+    #Let's check if this report is not already given
+    budget_set = ExpectedBudgetExpenditureAndAnnualBudget.objects.filter(commune = args['the_commune'], reporting_year = args['reporting_year'])
+    if(len(budget_set) > 0):
+        one_budget_row = budget_set[0]
+        if(one_budget_row.annual_badget):
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            return
+        else:
+            args['valide'] = True
+            one_budget_row.annual_badget = args['annual_budget']
+            args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+            return
+
+    ExpectedBudgetExpenditureAndAnnualBudget.objects.create(commune = args['the_commune'], annual_badget = args['annual_budget'], reporting_year = args['reporting_year'])
+
+
+    args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+
+
 
 def record_expected_expenditure(args):
     ''' This function is used to record expected expenditure '''
@@ -968,4 +1019,4 @@ def record_expenditure(args):
     if not args['valide']:
         return
 
-    
+
