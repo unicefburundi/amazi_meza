@@ -3,6 +3,15 @@ import json
 from amazi_meza_app.models import *
 from django.core import serializers
 from django.http import HttpResponse
+import datetime
+import pandas as pd
+import unicodedata
+
+def date_handler(obj):
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    else:
+        raise TypeError
 
 def landing(request):
     d = {}
@@ -66,7 +75,23 @@ def getwanteddata(request):
                 colline_list = Colline.objects.all()
 
             if (colline_list):
-                wp_pb_reports = WaterPointProblem.objects.all()
+                wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date))
 
-        response_data = serializers.serialize('json', wp_pb_reports)
-        return HttpResponse(response_data, content_type="application/json")
+            wp_pb_reports = serializers.serialize('python', wp_pb_reports)
+            columns = [r['fields'] for r in wp_pb_reports]
+            response_data = json.dumps(columns, default=date_handler)
+            rows = json.loads(response_data)
+
+            for r in rows:
+                concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id = r["water_point"])
+                r["colline_name"] = concerned_w_s_endpoint.colline.name
+                r["commune_name"] = concerned_w_s_endpoint.colline.commune.name
+
+                concerned_w_p_pbm_type = WaterPointProblemTypes.objects.get(id = r["problem"])
+                r["w_p_pbm_type_name"] = concerned_w_p_pbm_type.problem_type_name
+
+                r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
+
+
+        rows = json.dumps(rows, default=date_handler)
+        return HttpResponse(rows, content_type="application/json")

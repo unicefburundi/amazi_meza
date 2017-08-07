@@ -33,7 +33,6 @@
 
 		<!-- ajax call to database -->
 		function fetchCollines(code) {
-			alert("-- fetchCollines --");
 			$("#pbcolline option").each(function(){
         		if ($(this).val()) {
         			$(this).remove();
@@ -132,7 +131,36 @@
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	if (response.length > 0) {
-		                		alert(response);
+		                		
+		                		$('#divpb').append('<p><b>{% trans "WATER POINTS PROBLEMS REPORTS" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
+									
+								$('#tblpb').append('<thead>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Report Date" %}</th><th>{% trans "Problem Resolved" %}</th><th>{% trans "Resolve Date" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+
+
+								for (var i = 0; i < response.length; i++){
+									
+									$('#tblpb').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+									$('#tblpb tr:last').append('<td>' + response[i]["commune_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["colline_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["w_p_pbm_type_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["report_date"] +'</td>');
+									$('#tblpb tr:last').append('<td> - </td>');
+									$('#tblpb tr:last').append('<td> - </td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["case_of_diarrhea"] +'</td>');
+
+								}
+
 		                	}else {
 		                		$('#divpb').append('<p style="color:red;">No records found</p>');
 		                	}
