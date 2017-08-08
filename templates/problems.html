@@ -52,9 +52,8 @@
 		}
 
 		function fetchwanteddata() {
-					console.log("======Debut  fetchwanteddata====")
 					if (new Date($('#pbtartdate').val()) > new Date($('#pbendtdate').val())) {
-		                messimsg = "Start date cannot be a date after the End date";
+		                messimsg = "Start date can not be a date after the End date";
 		                messititle = "Invalid Date Selection";
 		                titleanimation = "messierror";
 		                messiprompt(messimsg, messititle, titleanimation);
@@ -81,7 +80,6 @@
 		    				code = -1;
 		    			}
 		    		}
-
 
 		    		if ($('#pbtartdate').val() != "") {
 		    			start_date = $('#pbtartdate').val();
@@ -132,14 +130,14 @@
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	if (response.length > 0) {
 		                		
-		                		$('#divpb').append('<p><b>{% trans "WATER POINTS PROBLEMS REPORTS" %}</b></p>' +
+		                		$('#divpb').append('<p><b>{% trans "REPORTED PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
 									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
 									
 								$('#tblpb').append('<thead>' +
-										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Report Date" %}</th><th>{% trans "Problem Resolved" %}</th><th>{% trans "Resolve Date" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Report Date" %}</th><th>{% trans "Status" %}</th><th>{% trans "Resolve Date" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +

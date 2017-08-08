@@ -74,8 +74,10 @@ def getwanteddata(request):
             elif (level == "national"):
                 colline_list = Colline.objects.all()
 
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
+
             if (colline_list):
-                wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date))
+                wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1)))
 
             wp_pb_reports = serializers.serialize('python', wp_pb_reports)
             columns = [r['fields'] for r in wp_pb_reports]
