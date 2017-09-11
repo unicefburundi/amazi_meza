@@ -6,6 +6,7 @@ from django.http import HttpResponse
 import datetime
 import pandas as pd
 import unicodedata
+from django.db.models import Count, Value
 
 def date_handler(obj):
     if hasattr(obj, 'isoformat'):
@@ -79,8 +80,8 @@ def getwanteddata(request):
             if (colline_list):
                 wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1)))
 
-            wp_pb_reports = serializers.serialize('python', wp_pb_reports)
-            columns = [r['fields'] for r in wp_pb_reports]
+            wp_pb_reports_1 = serializers.serialize('python', wp_pb_reports)
+            columns = [r['fields'] for r in wp_pb_reports_1]
             response_data = json.dumps(columns, default=date_handler)
             rows = json.loads(response_data)
 
@@ -95,5 +96,29 @@ def getwanteddata(request):
                 r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
 
 
+            wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
+            
+
+            frequent_problems_categ = []
+
+            for r in wp_pb_reports:
+                obj = {}
+                obj[unicodedata.normalize('NFKD', r["problem__problem_type_name"]).encode('ascii','ignore')] = r["number"]
+                frequent_problems_categ.append(obj)
+
+            data_pieChart = []
+            pieChart_freq_pbm_cat = []
+
+            for wpp in frequent_problems_categ:
+                one_item = {}
+                k, v = wpp.items()[0]
+                one_item["name"] = k
+                one_item["y"] = v
+                pieChart_freq_pbm_cat.append(one_item)
+
         rows = json.dumps(rows, default=date_handler)
-        return HttpResponse(rows, content_type="application/json")
+        pieChart_freq_pbm_cat = json.dumps(pieChart_freq_pbm_cat, default=date_handler)
+
+        all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
+
+        return HttpResponse(all_data, content_type="application/json")

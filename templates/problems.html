@@ -1,9 +1,15 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load i18n %}
+{% load static %}
+{% load nvd3_tags %}
 
 {% block head %}
+
+	{% include_chart_jscss %}
+
 	<script language="JavaScript">
+
 
 		$(document).ready(function() {
 			$('.datepicker').datepicker({
@@ -128,9 +134,8 @@
     						// fetch wanted data
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
-		                	if (response.length > 0) {
-		                		
-		                		$('#divpb').append('<p><b>{% trans "REPORTED PROBLEMS" %}</b></p>' +
+		                	if (response.rows.length > 0) {
+		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINT PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -144,20 +149,59 @@
 										
 									'</tbody>');
 
+								problemReports = JSON.parse(response.rows);
 
-								for (var i = 0; i < response.length; i++){
+								for (var i = 0; i < problemReports.length; i++){
 									
 									$('#tblpb').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
-									$('#tblpb tr:last').append('<td>' + response[i]["commune_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["colline_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["w_p_pbm_type_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["report_date"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["commune_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["colline_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["w_p_pbm_type_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["report_date"] +'</td>');
 									$('#tblpb tr:last').append('<td> - </td>');
 									$('#tblpb tr:last').append('<td> - </td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["case_of_diarrhea"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["case_of_diarrhea"] +'</td>');
 
 								}
+
+
+						        var WaterPProblemCategories = response.data;
+
+								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
+
+						        console.log(ReportedWPProblemsCategories);
+
+						         Highcharts.chart('container', {
+							        chart: {
+							            plotBackgroundColor: null,
+							            plotBorderWidth: null,
+							            plotShadow: false,
+							            type: 'pie'
+							        },
+							        title: {
+							            text: 'Reported water point problem categories'
+							        },
+							        tooltip: {
+							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+							        },
+							        plotOptions: {
+							            pie: {
+							                allowPointSelect: true,
+							                cursor: 'pointer',
+							                dataLabels: {
+							                    enabled: false
+							                },
+							                showInLegend: true
+							            }
+							        },
+							        series: [{
+							            name: 'Brands',
+							            colorByPoint: true,
+							            data: ReportedWPProblemsCategories
+							        }]
+							    });
+
 
 		                	}else {
 		                		$('#divpb').append('<p style="color:red;">No records found</p>');
@@ -240,9 +284,15 @@
 		
 		<div id="divpb" class="form-inline" style="padding-left :5px; padding-right :5px;">
 
-		{{response_data}}
 
 		</div>
+
+		<!--<div id="chartcontainer">
+			{% include_container chartcontainer 400 600 %}
+		</div>-->
+
+		
+		<div id="container" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto"></div>
 
 	</div>
 
