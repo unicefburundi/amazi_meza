@@ -46,7 +46,9 @@
         		}
 		    });
 
-			$('#divpb').empty();
+			$('#div_tbl_loc_number_wp').empty();
+			$('#loc_number_of_wp_chart_container').empty();
+
 			if (code) {
 				//initializesonic();
 
@@ -65,7 +67,9 @@
         		}
 		    });
 
-			$('#divpb').empty();
+			$('#div_tbl_loc_number_wp').empty();
+			$('#loc_number_of_wp_chart_container').empty();
+
 			if (code) {
 				//initializesonic();
 
@@ -110,7 +114,8 @@
 			    		}
 		    		}
 
-					$('#divpb').empty();
+					$('#div_tbl_loc_number_wp').empty();
+					$('#loc_number_of_wp_chart_container').empty();
 
 		    		if (level && code) {
 				        data = JSON.stringify({ 'level': level, 'code': code, });
@@ -159,24 +164,78 @@
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	//if (response.rows) {
-		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINT PROBLEMS" %}</b></p>' +
+		                		$('#div_tbl_loc_number_wp').append('<p><b>{% trans "NUMBER OF WATER POINTS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
-									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
-									
-								$('#tblpb').append('<thead>' +
-										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Number of water points" %}</th>' +
-									'</thead>' +
-										
-									'<tbody>' +
-										
-									'</tbody>');
+									'<table id="tbl" class="table table-striped table-bordered table-condensed">');
+								if ($('#pbcolline').val() != "") {
+									$('#tbl').append('<thead>' +
+											'<th>{% trans "Colline" %}</th><th>{% trans "Number of water points" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+								}else{
+									if($('#pbcommune').val() != ""){
+										$('#tbl').append('<thead>' +
+											'<th>{% trans "Colline" %}</th><th>{% trans "Number of water points" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+									}else{
+										if($('#div_province').val() != ""){
+											$('#tbl').append('<thead>' +
+											'<th>{% trans "Commune" %}</th><th>{% trans "Number of water points" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+										}else{
+											$('#tbl').append('<thead>' +
+											'<th>{% trans "Province" %}</th><th>{% trans "Number of water points" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+										}
+									}
+								}
 								
 								var barChartLocationNumberOfWP = response;
 
-
 								console.log(barChartLocationNumberOfWP);
+
+
+
+
+								//Add rows in the table
+								for (var i = 0; i < barChartLocationNumberOfWP.length; i++){
+									$('#tbl').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+									$('#tbl tr:last').append('<td>' + barChartLocationNumberOfWP[i]["name"] +'</td>');
+									$('#tbl tr:last').append('<td>' + barChartLocationNumberOfWP[i]["y"] +'</td>');
+								}
+
+
+								$('#tbl').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
 
 								// Create the chart
 								Highcharts.chart('loc_number_of_wp_chart_container', {
@@ -285,6 +344,13 @@
 					</select>
 				</div>
 			</div>
+
+			<hr>
+
+			<div id="div_tbl_loc_number_wp" class="form-inline" style="padding-left :5px; padding-right :5px;">
+			</div>
+
+			<hr>
 
 			<div id="loc_number_of_wp_chart_container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 {% endblock %}
