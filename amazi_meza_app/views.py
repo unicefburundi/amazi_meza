@@ -33,12 +33,23 @@ def problems(request):
 def mapping(request):
     d = {}
     d["pagetitle"] = "Mapping"
-    d["communes"] = Commune.objects.all()
+    d["provinces"] = Province.objects.all()
     return render(request, 'mapping.html', d)
 
 def finance(request):
     d = {}
     return render(request, 'finance.html', d)
+
+def getCommunesInProvince(request):
+    response_data = {}
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        code = json_data['code']
+        if (code):
+            communes = Commune.objects.filter(province=Province.objects.get(code=code))
+            response_data = serializers.serialize('json', communes)
+        return HttpResponse(response_data, content_type="application/json")
+
 
 def getCollinesInCommune(request):
     response_data = {}
@@ -162,6 +173,20 @@ def get_number_of_water_points(request):
                         one_item["y"] = wpl["number"]
                         one_item["name: 'Mi"] = wpl["colline__commune__name"]
                         barChart_location_number_of_wp.append(one_item)
+            elif (level == "province"):
+                province_list = Province.objects.filter(code = code)
+                if (province_list):
+                    commune_list = Commune.objects.filter(province__in = province_list)
+                    if (commune_list):
+                        colline_list = Colline.objects.filter(commune__in = commune_list)
+                        location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__name").annotate(number=Count('colline__commune__name'))
+                
+                        for wpl in location_number_of_wp:
+                            one_item = {}
+                            one_item["name"] = wpl["colline__commune__name"]
+                            one_item["y"] = wpl["number"]
+                            one_item["name: 'Mi"] = wpl["colline__commune__name"]
+                            barChart_location_number_of_wp.append(one_item)
             elif (level == "national"):
                 colline_list = Colline.objects.all()
                 location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__province__name").annotate(number=Count('colline__commune__province__name'))
