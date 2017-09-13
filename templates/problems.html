@@ -2,11 +2,8 @@
 {% load staticfiles %}
 {% load i18n %}
 {% load static %}
-{% load nvd3_tags %}
 
 {% block head %}
-
-	{% include_chart_jscss %}
 
 	<script language="JavaScript">
 
@@ -283,15 +280,9 @@
 		<hr style="margin-top:10px; margin-bottom:10px">
 		
 		<div id="divpb" class="form-inline" style="padding-left :5px; padding-right :5px;">
-
-
 		</div>
 
-		<!--<div id="chartcontainer">
-			{% include_container chartcontainer 400 600 %}
-		</div>-->
 
-		
 		<div id="container" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto"></div>
 
 	</div>

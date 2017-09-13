@@ -3,11 +3,245 @@
 {% load i18n %}
 
 
+{% block head %}
+
+	<script language="JavaScript">
+
+
+		$(document).ready(function() {
+			$('.datepicker').datepicker({
+			    dateFormat: 'yy-mm-dd',
+			    startDate: '-3d'
+			});
+
+			$(".datepicker").datepicker("setDate", new Date());
+			
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+
+			if ("{{ communes }}") {
+				{% for c in communes %}
+					$('#pbcommune').append('<option value="{{ c.code }}">{{ c.name }}</option>');
+				{% endfor %}
+			}
+
+			fetchwanteddata()
+
+		});
+
+		<!-- ajax call to database -->
+		function fetchCollines(code) {
+			$("#pbcolline option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
+
+			$('#divpb').empty();
+			if (code) {
+				//initializesonic();
+
+				ajaxurl = 'getcollinesincommune';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchcollines";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
+		function fetchwanteddata() {
+					if (new Date($('#pbtartdate').val()) > new Date($('#pbendtdate').val())) {
+		                messimsg = "Start date can not be a date after the End date";
+		                messititle = "Invalid Date Selection";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		                return;
+					}
+			    	initializesonic();
+			    	
+			    	ajaxurl = 'getnumberofwaterpoints';
+		    		var level = null;
+		    		var code = null;
+
+		    		if ($('#pbcolline').val() != "") {
+		    			level = "colline";
+		    			code = $('#pbcolline').val();
+		    		}else{
+		    			if($('#pbcommune').val() != ""){
+		    				level = "commune";
+		    				code = $('#pbcommune').val();
+		    			}else{
+		    				level = "national";
+		    				code = -1;
+		    			}
+		    		}
+
+					$('#divpb').empty();
+
+		    		if (level && code) {
+				        data = JSON.stringify({ 'level': level, 'code': code, });
+
+			            ajaxpostbackfunction = "fetchwanteddata";
+			            ajaxpost(ajaxurl, data);
+
+			        } else {
+			        	$('#overlay').remove();
+			        }
+			    }
+
+
+		function ajaxpost(posturl, data) {
+		        ajaxresults = null;
+		        $.ajax({
+		        	beforeSend: function(xhr, settings) {
+				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				        }
+				    },
+		            type: 'POST',
+		            url: posturl,
+		            data: data,
+		            contentType: 'application/json; charset=utf-8',
+		            dataType: 'json',
+
+		            success: function (response) {
+		                if (ajaxpostbackfunction == "fetchcollines") {
+		                	for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		$('#pbcolline').append('<option value=' + code +'>' + name + '</option>');
+    						}
+    						// fetch wanted data
+		                	fetchwanteddata();
+		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
+		                	//if (response.rows) {
+		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINT PROBLEMS" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
+									
+								$('#tblpb').append('<thead>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Number of water points" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+								
+								var barChartLocationNumberOfWP = response;
+
+
+								console.log(barChartLocationNumberOfWP);
+
+								// Create the chart
+								Highcharts.chart('loc_number_of_wp_chart_container', {
+								    chart: {
+								        type: 'column'
+								    },
+								    title: {
+								        text: 'Number of water points per location'
+								    },
+								    xAxis: {
+								        type: 'category'
+								    },
+								    yAxis: {
+								    	tickInterval: 1,
+								        title: {
+								            text: 'Number of water points'
+								        }
+
+								    },
+								    legend: {
+								        enabled: false
+								    },
+								    plotOptions: {
+								        series: {
+								            borderWidth: 0,
+								            dataLabels: {
+								                enabled: true,
+								            }
+								        }
+								    },
+								    tooltip: {
+								        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+								        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+								    },
+
+								    series: [{
+								        name: 'Number of water points',
+								        colorByPoint: true,
+								        data: barChartLocationNumberOfWP
+								    }],
+								});
+								
+
+
+
+		                	/*}else {
+		                		$('#divpb').append('<p style="color:red;">No records found</p>');
+		                	}*/
+		                }
+
+		                $('#overlay').remove();
+		            },
+
+		            failure: function (json) {
+		                messimsg = "Error";
+		                messititle = "Error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		               $('#overlay').remove();
+		            },
+
+		            error: function (jqXHR, exception) {
+		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
+		                messititle = "error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		            }
+		        });
+		        
+		        return false;
+		    }
+		</script>
+{% endblock %}
+
+
+
 
 {% block container %}
+			<div>
+				{% if msg %}
+					<div class="divmessage"><p>{{ msg }}</p></div>
+				{% endif %}
+				{% if err %}
+					<div class="diverror"><p>{{ err }}</p></div>
+				{% endif %}
+			</div>
 
+			<div class="form-inline" style="padding-left :5px; padding-right :5px;">
+				<div class="form-group">
+					<label for="pbcommune">{% trans "Commune:" %}</label>
+					<select id="pbcommune" class="form-control" style="width:140px" onchange="fetchCollines(this.value)" required="required">
+						<option value="" selected="selected">[ {% trans "Select Commune" %} ]</option>
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="pbcolline">{% trans "Colline:" %}</label>
+					<select id="pbcolline" class="form-control" style="width:140px" onchange="fetchwanteddata(this.value)" required="required">
+						<option value="" selected="selected">[ {% trans "Select Colline" %} ]</option>'
+					</select>
+				</div>
+			</div>
 
-<h1>Mapping page content</h1>
-
-
+			<div id="loc_number_of_wp_chart_container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 {% endblock %}

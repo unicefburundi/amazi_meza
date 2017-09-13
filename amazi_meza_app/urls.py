@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'external_request', handel_rapidpro_request, name="handel_request"),
     url(r'^getcollinesincommune', views.getCollinesInCommune, name='getcollinesincommune'),
     url(r'^getwanteddata', views.getwanteddata, name='getwanteddata'),
+    url(r'^getnumberofwaterpoints', views.get_number_of_water_points, name='getnumberofwaterpoints'),
 ]
