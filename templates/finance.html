@@ -1,13 +1,348 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load i18n %}
+{% load static %}
 
+{% block head %}
+
+	<script language="JavaScript">
+
+
+		$(document).ready(function() {
+			$('.datepicker').datepicker({
+			    dateFormat: 'yy-mm-dd',
+			    startDate: '-3d'
+			});
+
+			$(".datepicker").datepicker("setDate", new Date());
+			
+			if ((".divmessage").length) {
+				$(".divmessage").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800).fadeOut('slow'); 
+			}
+			
+			if ((".diverror").length) {
+				$(".diverror").fadeIn('slow').animate({opacity: 1.0}, 1500).effect("pulsate", { times: 2 }, 800); 
+			}
+
+			if ("{{ provinces }}") {
+				{% for p in provinces %}
+					$('#div_province').append('<option value="{{ p.code }}">{{ p.name }}</option>');
+				{% endfor %}
+			}
+
+			fetchwanteddata()
+
+		});
+
+		<!-- ajax call to database -->
+		function fetchCommunes(code) {
+			$("#pbcommune option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
+		    /*$("#pbcolline option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });*/
+
+			$('#div_tbl_loc_number_wp').empty();
+			$('#loc_number_of_wp_chart_container').empty();
+			if (code) {
+				//initializesonic();
+				ajaxurl = 'getcommunesinprovince';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchcommunes";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
+		function fetchCollines(code) {
+			/*$("#pbcolline option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });*/
+
+			$('#div_fin_tbl').empty();
+			if (code) {
+				//initializesonic();
+
+				ajaxurl = 'getcollinesincommune';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchcollines";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
+		function fetchwanteddata() {
+					if (new Date($('#pbtartdate').val()) > new Date($('#pbendtdate').val())) {
+		                messimsg = "Start date can not be a date after the End date";
+		                messititle = "Invalid Date Selection";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		                return;
+					}
+			    	initializesonic();
+			    	
+			    	ajaxurl = 'getwanteddata';
+		    		var level = null;
+		    		var code = null;
+		    		var start_date = null;
+		    		var end_date = null;
+
+		    		/*if ($('#pbcolline').val() != "") {
+		    			level = "colline";
+		    			code = $('#pbcolline').val();
+		    		}*/
+		    			if($('#pbcommune').val() != ""){
+		    				level = "commune";
+		    				code = $('#pbcommune').val();
+		    			}else{
+		    				level = "national";
+		    				code = -1;
+		    			}
+		    		
+
+		    		if ($('#pbtartdate').val() != "") {
+		    			start_date = $('#pbtartdate').val();
+		    		}
+
+		    		if ($('#pbendtdate').val() != "") {
+		    			end_date = $('#pbendtdate').val();
+		    		}
+
+					$('#div_fin_tbl').empty();
+
+		    		if (level && code && start_date && end_date) {
+				        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
+
+			            ajaxpostbackfunction = "fetchwanteddata";
+			            ajaxpost(ajaxurl, data);
+
+			        } else {
+			        	$('#overlay').remove();
+			        }
+			    }
+
+
+		function ajaxpost(posturl, data) {
+		        ajaxresults = null;
+		        $.ajax({
+		        	beforeSend: function(xhr, settings) {
+				        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+				            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+				        }
+				    },
+		            type: 'POST',
+		            url: posturl,
+		            data: data,
+		            contentType: 'application/json; charset=utf-8',
+		            dataType: 'json',
+
+		            success: function (response) {
+		            	if (ajaxpostbackfunction == "fetchcommunes") {
+		                	for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		$('#pbcommune').append('<option value=' + code +'>' + name + '</option>');
+    						}
+    						// fetch wanted data
+		                	fetchwanteddata();
+		                } else if (ajaxpostbackfunction == "fetchcollines") {
+		                	for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		//$('#pbcolline').append('<option value=' + code +'>' + name + '</option>');
+    						}
+    						// fetch wanted data
+		                	fetchwanteddata();
+		                }	else if (ajaxpostbackfunction == "fetchwanteddata") {
+		                	//if (response.rows.length > 0) {
+		                		$('#div_fin_tbl').append('<p><b>{% trans "Expenditures" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
+									
+								$('#tblpb').append('<thead>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Expenditure Category" %}</th><th>{% trans "Expenditure Date" %}</th><th>{% trans "Amount(FBU)" %}</th>' +
+									'</thead>' +
+										
+									'<tbody>' +
+										
+									'</tbody>');
+
+								problemReports = JSON.parse(response.rows);
+
+								for (var i = 0; i < problemReports.length; i++){
+									
+									$('#tblpb').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["commune_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["colline_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["w_p_pbm_type_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["report_date"] +'</td>');
+									$('#tblpb tr:last').append('<td> - </td>');
+									$('#tblpb tr:last').append('<td> - </td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["case_of_diarrhea"] +'</td>');
+
+								}
+
+
+								$('#tblpb').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
+
+						        var WaterPProblemCategories = response.data;
+
+								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
+
+						        console.log(ReportedWPProblemsCategories);
+
+						         Highcharts.chart('div_container_pchart', {
+							        chart: {
+							            plotBackgroundColor: null,
+							            plotBorderWidth: null,
+							            plotShadow: false,
+							            type: 'pie'
+							        },
+							        title: {
+							            text: 'Reported water point problem categories'
+							        },
+							        tooltip: {
+							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+							        },
+							        plotOptions: {
+							            pie: {
+							                allowPointSelect: true,
+							                cursor: 'pointer',
+							                dataLabels: {
+							                    enabled: false
+							                },
+							                showInLegend: true
+							            }
+							        },
+							        series: [{
+							            name: 'Brands',
+							            colorByPoint: true,
+							            data: ReportedWPProblemsCategories
+							        }]
+							    });
+
+
+		                	/*}else {
+		                		$('#div_fin_tbl').append('<p style="color:red;">No records found</p>');
+		                	}*/
+		                }
+
+		                $('#overlay').remove();
+		            },
+
+		            failure: function (json) {
+		                messimsg = "Error";
+		                messititle = "Error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		               $('#overlay').remove();
+		            },
+
+		            error: function (jqXHR, exception) {
+		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
+		                messititle = "error";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		            }
+		        });
+		        
+		        return false;
+		    }
+		</script>
+{% endblock %}
 
 
 {% block container %}
 
 
-<h1>Finance page content</h1>
+	<div>
+		{% if msg %}
+			<div class="divmessage"><p>{{ msg }}</p></div>
+		{% endif %}
+		{% if err %}
+			<div class="diverror"><p>{{ err }}</p></div>
+		{% endif %}
+	</div>
+	
+	<div>
+		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
+
+			<label for="pbtartdate">{% trans "From:" %}</label>
+			<div class="input-group date" data-provide="datepicker">
+			    <input type="text" id="pbtartdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
+			    <div class="input-group-addon">
+			        <span class="glyphicon glyphicon-th"></span>
+			    </div>
+			</div>
+
+			<label for="pbendtdate">{% trans "To:" %}</label>
+			<div class="input-group date" data-provide="datepicker">
+			    <input type="text" id="pbendtdate" class="form-control datepicker" readonly="readonly" style="width:130px" required="required" onchange="fetchwanteddata()">
+			    <div class="input-group-addon">
+			        <span class="glyphicon glyphicon-th"></span>
+			    </div>
+			</div>
+
+			<div class="form-group">
+				<label for="div_province">{% trans "Province:" %}</label>
+				<select id="div_province" class="form-control" style="width:140px" onchange="fetchCommunes(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Province" %} ]</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="pbcommune">{% trans "Commune:" %}</label>
+				<select id="pbcommune" class="form-control" style="width:140px" onchange="fetchCollines(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Commune" %} ]</option>
+				</select>
+			</div>
+			<!--<div class="form-group">
+				<label for="pbcolline">{% trans "Colline:" %}</label>
+				<select id="pbcolline" class="form-control" style="width:140px" onchange="fetchwanteddata(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Colline" %} ]</option>'
+				</select>
+			</div>-->
+
+		</div>
+
+		<hr style="margin-top:10px; margin-bottom:10px">
+		
+		<div id="div_fin_tbl" class="form-inline" style="padding-left :5px; padding-right :5px;">
+		</div>
+
+		<hr>
+
+		<div id="div_container_pchart" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
+			
+		</div>
+
+	</div>
 
 
 {% endblock %}

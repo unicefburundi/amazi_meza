@@ -38,6 +38,8 @@ def mapping(request):
 
 def finance(request):
     d = {}
+    d["pagetitle"] = "Finance"
+    d["provinces"] = Province.objects.all()
     return render(request, 'finance.html', d)
 
 def getCommunesInProvince(request):
