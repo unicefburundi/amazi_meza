@@ -30,6 +30,12 @@
 				{% endfor %}
 			}
 
+			if ("{{ expenditures }}"){
+				{% for e in expenditures %}
+					$('#exp_category').append('<option value="{{ e.priority }}">{{ e.expenditure_category_name }}</option>');
+				{% endfor %}
+			}
+
 			fetchwanteddata()
 
 		});
@@ -89,7 +95,7 @@
 					}
 			    	initializesonic();
 			    	
-			    	ajaxurl = 'getwanteddata';
+			    	ajaxurl = 'getexpenditures';
 		    		var level = null;
 		    		var code = null;
 		    		var start_date = null;
@@ -99,14 +105,18 @@
 		    			level = "colline";
 		    			code = $('#pbcolline').val();
 		    		}*/
-		    			if($('#pbcommune').val() != ""){
-		    				level = "commune";
-		    				code = $('#pbcommune').val();
-		    			}else{
+	    			if($('#pbcommune').val() != ""){
+	    				level = "commune";
+	    				code = $('#pbcommune').val();
+	    			}else{
+	    				if($('#div_province').val() != ""){
+	    					level = "province";
+	    					code = $('#div_province').val();
+	    				}else{
 		    				level = "national";
 		    				code = -1;
-		    			}
-		    		
+	    				}
+	    			}
 
 		    		if ($('#pbtartdate').val() != "") {
 		    			start_date = $('#pbtartdate').val();
@@ -172,26 +182,26 @@
 									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
 									
 								$('#tblpb').append('<thead>' +
-										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Expenditure Category" %}</th><th>{% trans "Expenditure Date" %}</th><th>{% trans "Amount(FBU)" %}</th>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Expenditure Category" %}</th><th>{% trans "Year" %}</th><th>{% trans "Month" %}</th><th>{% trans "Amount(FBU)" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
 										
 									'</tbody>');
-
-								problemReports = JSON.parse(response.rows);
-
-								for (var i = 0; i < problemReports.length; i++){
+								
+								//exp_reports = JSON.parse(response.exp_reports);
+								//exp_reports = exp_reports;
+								console.log(response);
+								for (var i = 0; i < response.length; i++){
 									
 									$('#tblpb').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
-									$('#tblpb tr:last').append('<td>' + problemReports[i]["commune_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + problemReports[i]["colline_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + problemReports[i]["w_p_pbm_type_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + problemReports[i]["report_date"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["commune_name"] +'</td>');
 									$('#tblpb tr:last').append('<td> - </td>');
-									$('#tblpb tr:last').append('<td> - </td>');
-									$('#tblpb tr:last').append('<td>' + problemReports[i]["case_of_diarrhea"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["expenditure_cat_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["reporting_year"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["reporting_month"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + response[i]["expenditure_amount"] +'</td>');
 
 								}
 
@@ -211,7 +221,7 @@
 									});
 
 
-						        var WaterPProblemCategories = response.data;
+						        var WaterPProblemCategories = data;
 
 								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
 
@@ -251,7 +261,7 @@
 		                	/*}else {
 		                		$('#div_fin_tbl').append('<p style="color:red;">No records found</p>');
 		                	}*/
-		                }
+		                	}
 
 		                $('#overlay').remove();
 		            },
@@ -265,16 +275,17 @@
 		            },
 
 		            error: function (jqXHR, exception) {
+		            	console.log(exception);
 		                messimsg = getajaxerrormessage(jqXHR, exception); //jqXHR.responseText;
 		                messititle = "error";
 		                titleanimation = "messierror";
 		                messiprompt(messimsg, messititle, titleanimation);
 		                $('#overlay').remove();
 		            }
+
 		        });
-		        
 		        return false;
-		    }
+		}
 		</script>
 {% endblock %}
 
@@ -322,12 +333,12 @@
 					<option value="" selected="selected">[ {% trans "Select Commune" %} ]</option>
 				</select>
 			</div>
-			<!--<div class="form-group">
-				<label for="pbcolline">{% trans "Colline:" %}</label>
-				<select id="pbcolline" class="form-control" style="width:140px" onchange="fetchwanteddata(this.value)" required="required">
-					<option value="" selected="selected">[ {% trans "Select Colline" %} ]</option>'
+			<div class="form-group">
+				<label for="exp_category">{% trans "Category:" %}</label>
+				<select id="exp_category" class="form-control" style="width:140px" onchange="fetchwanteddata(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select category" %} ]</option>'
 				</select>
-			</div>-->
+			</div>
 
 		</div>
 

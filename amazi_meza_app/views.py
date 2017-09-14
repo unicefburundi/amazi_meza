@@ -40,6 +40,7 @@ def finance(request):
     d = {}
     d["pagetitle"] = "Finance"
     d["provinces"] = Province.objects.all()
+    d["expenditures"] = ExpenditureCategory.objects.all()
     return render(request, 'finance.html', d)
 
 def getCommunesInProvince(request):
@@ -139,6 +140,57 @@ def getwanteddata(request):
         return HttpResponse(all_data, content_type="application/json")
 
 
+
+def get_expenditures_info(request):
+    response_data = {}
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+        level = json_data['level']
+        code = json_data['code']
+        start_date = json_data['start_date']
+        end_date = json_data['end_date']
+        exp_reports = ""
+        all_data = []
+
+        if (level):
+            commune_list = None
+            if (level == "commune"):
+                commune_list = Commune.objects.filter(code = code)
+            if(level == "province"):
+                province = Province.objects.filter(code = code)
+                if(province):
+                    commune_list = Commune.objects.filter(province__in = province)
+            if(level == "national"):
+                commune_list = Commune.objects.all()
+
+            #Below row will be changed and use reporting_year and reporting_month instead of
+            #reception_date
+            
+            start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            end_date = end_date + datetime.timedelta(days=1)
+            
+            exp_reports = MonthlyExpenditure.objects.filter(commune__in = commune_list, reception_date__range = (start_date, end_date))
+
+            exp_reports_1 = serializers.serialize('python', exp_reports)
+            columns = [r['fields'] for r in exp_reports_1]
+            exp_reports = json.dumps(columns, default=date_handler)
+            exp_reports = json.loads(exp_reports)
+
+            for exp in exp_reports:
+                concerned_commune = Commune.objects.filter(id = exp["commune"])
+                if len(concerned_commune) > 0:
+                    concerned_commune = concerned_commune[0]
+                    exp["commune_name"] = concerned_commune.name
+                concerned_exp_cat = ExpenditureCategory.objects.filter(id = exp["expenditure"])
+                if len(concerned_exp_cat) > 0:
+                    concerned_exp_cat = concerned_exp_cat[0]
+                    exp["expenditure_cat_name"] = concerned_exp_cat.expenditure_category_name
+
+            exp_reports = json.dumps(exp_reports, default=date_handler)
+
+    return HttpResponse(exp_reports, content_type="application/json")
 
 
 def get_number_of_water_points(request):
