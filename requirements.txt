@@ -1,0 +1,17 @@
+Django==1.9.8
+Jinja2==2.9.6
+MarkupSafe==1.0
+Unidecode==0.04.21
+argparse==1.2.1
+django-bower==5.2.0
+django-jsonview==1.0.0
+django-nvd3==0.9.7
+numpy==1.13.1
+pandas==0.20.3
+psycopg2==2.7.1
+python-dateutil==2.6.1
+python-nvd3==0.14.2
+python-slugify==1.1.4
+pytz==2017.2
+six==1.10.0
+wsgiref==0.1.2
