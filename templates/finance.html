@@ -192,16 +192,19 @@
 								//exp_reports = JSON.parse(response.exp_reports);
 								//exp_reports = exp_reports;
 								console.log(response);
-								for (var i = 0; i < response.length; i++){
+								exp_reports = JSON.parse(response.rows);
+
+
+								for (var i = 0; i < exp_reports.length; i++){
 									
 									$('#tblpb').find('tbody').append('<tr style="cursor:pointer;"></tr>');
 
-									$('#tblpb tr:last').append('<td>' + response[i]["commune_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + exp_reports[i]["commune_name"] +'</td>');
 									$('#tblpb tr:last').append('<td> - </td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["expenditure_cat_name"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["reporting_year"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["reporting_month"] +'</td>');
-									$('#tblpb tr:last').append('<td>' + response[i]["expenditure_amount"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + exp_reports[i]["expenditure_cat_name"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + exp_reports[i]["reporting_year"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + exp_reports[i]["reporting_month"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + exp_reports[i]["expenditure_amount"] +'</td>');
 
 								}
 
@@ -221,7 +224,8 @@
 									});
 
 
-						        var WaterPProblemCategories = data;
+						        //var WaterPProblemCategories = data;
+						        var WaterPProblemCategories = response.data;
 
 								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
 
@@ -235,10 +239,10 @@
 							            type: 'pie'
 							        },
 							        title: {
-							            text: 'Reported water point problem categories'
+							            text: 'Expenditures per category'
 							        },
 							        tooltip: {
-							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+							            pointFormat: '<b>{point.percentage:.1f}%</b>'
 							        },
 							        plotOptions: {
 							            pie: {

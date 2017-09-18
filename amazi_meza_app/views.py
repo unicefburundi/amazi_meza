@@ -6,7 +6,7 @@ from django.http import HttpResponse
 import datetime
 import pandas as pd
 import unicodedata
-from django.db.models import Count, Value
+from django.db.models import Count, Value, Sum
 
 def date_handler(obj):
     if hasattr(obj, 'isoformat'):
@@ -190,7 +190,28 @@ def get_expenditures_info(request):
 
             exp_reports = json.dumps(exp_reports, default=date_handler)
 
-    return HttpResponse(exp_reports, content_type="application/json")
+
+
+
+            number_of_exp_per_categories = MonthlyExpenditure.objects.filter(commune__in = commune_list, reception_date__range = (start_date, end_date)).values("expenditure__expenditure_category_name").annotate(number=Sum('expenditure_amount'))
+            #pieChart_exp_per_cat = json.dumps(number_of_exp_per_categories, default=date_handler)
+
+            #all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_per_cat,})
+
+            pieChart_exp_cat = []
+
+            for exp in number_of_exp_per_categories:
+                one_item = {}
+                #k, v = wpp.items()[0]
+                one_item["name"] = exp["expenditure__expenditure_category_name"].encode('ascii','ignore')
+                one_item["y"] = exp["number"]
+                pieChart_exp_cat.append(one_item)
+
+            pieChart_exp_cat = json.dumps(pieChart_exp_cat, default=date_handler)
+
+            all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_cat,})
+
+    return HttpResponse(all_data, content_type="application/json")
 
 
 def get_number_of_water_points(request):
