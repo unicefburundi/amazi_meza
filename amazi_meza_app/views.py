@@ -215,7 +215,6 @@ def get_expenditures_info(request):
 
             #Compute expenditure per location
             exp_per_location = MonthlyExpenditure.objects.filter(commune__in = commune_list, reception_date__range = (start_date, end_date)).values("commune__name").annotate(number=Sum('expenditure_amount'))
-            print(exp_per_location)
             barChart_location_expenditure = []
             for exp_loc in exp_per_location:
                 one_item = {}
@@ -225,7 +224,6 @@ def get_expenditures_info(request):
                 barChart_location_expenditure.append(one_item)
 
 
-            print(barChart_location_expenditure)
             all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_cat, 'location_expendi': barChart_location_expenditure,})
 
     return HttpResponse(all_data, content_type="application/json")

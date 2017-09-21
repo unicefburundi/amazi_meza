@@ -311,6 +311,47 @@
 								        ]
 									});
 
+							//In bar chart
+							Highcharts.chart('div_chart_loc_exp', {
+								    chart: {
+								        type: 'column'
+								    },
+								    title: {
+								        text: 'Expenditure per location'
+								    },
+								    xAxis: {
+								        type: 'category'
+								    },
+								    yAxis: {
+								    	tickInterval: 1,
+								        title: {
+								            text: 'Amount in Fbu'
+								        }
+
+								    },
+								    legend: {
+								        enabled: false
+								    },
+								    plotOptions: {
+								        series: {
+								            borderWidth: 0,
+								            dataLabels: {
+								                enabled: true,
+								            }
+								        }
+								    },
+								    tooltip: {
+								        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+								        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+								    },
+
+								    series: [{
+								        name: 'Expenditure',
+								        colorByPoint: true,
+								        data: location_expenditure
+								    }],
+								});
+
 
 
 		                	}
