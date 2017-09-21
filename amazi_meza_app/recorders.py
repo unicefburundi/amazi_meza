@@ -761,7 +761,7 @@ def record_water_sources_points(args):
             NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "EXISTING")
         else:
             args['valide'] = False
-            args['info_to_contact'] = "Erreur"
+            args['info_to_contact'] = "Erreur admin. Creer les types de points d eau."
             break
 
     if args['valide']:
@@ -840,7 +840,7 @@ def record_additional_water_sources_points(args):
             NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, additional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "ADDITIONAL")
         else:
             args['valide'] = False
-            args['info_to_contact'] = "Erreur"
+            args['info_to_contact'] = "Erreur admin. Contacter l administrateur de ce systeme"
             break
 
     if args['valide']:
@@ -1193,7 +1193,7 @@ def record_expenditure(args):
                 MonthlyExpenditure.objects.create(commune = args['the_commune'], expenditure = exp_t, expenditure_amount = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
             else:
                 args['valide'] = False
-                args['info_to_contact'] = "Erreur"
+                args['info_to_contact'] = "Erreur admin. Contacter l administrateur de ce systme."
                 break
 
     if args['valide']:

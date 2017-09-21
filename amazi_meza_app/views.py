@@ -137,6 +137,8 @@ def getwanteddata(request):
 
         all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
 
+        print(all_data)
+
         return HttpResponse(all_data, content_type="application/json")
 
 
@@ -275,5 +277,7 @@ def get_number_of_water_points(request):
 
         
         data = json.dumps(barChart_location_number_of_wp, default=date_handler)
+
+        print(data)
 
         return HttpResponse(data, content_type="application/json")
