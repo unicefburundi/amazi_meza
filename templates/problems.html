@@ -43,6 +43,8 @@
 		    });
 
 			$('#divpb').empty();
+			$('#div_tbl_loc_number_wpp').empty();
+			$('#div_chart_loc_wpp').empty();
 			if (code) {
 				//initializesonic();
 
@@ -93,6 +95,9 @@
 		    		}
 
 					$('#divpb').empty();
+
+					$('#div_tbl_loc_number_wpp').empty();
+					$('#div_chart_loc_wpp').empty();
 
 		    		if (level && code && start_date && end_date) {
 				        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
@@ -145,10 +150,10 @@
 									'<tbody>' +
 										
 									'</tbody>');
+								console.log(response)
 
 								problemReports = JSON.parse(response.rows);
 
-								console.log(problemReports);
 
 								for (var i = 0; i < problemReports.length; i++){
 									
@@ -215,6 +220,46 @@
 							            data: ReportedWPProblemsCategories
 							        }]
 							    });
+
+
+
+
+							//Let's desplay number of water points problems per location (table and chart)
+		                	loc_number_wpp = response.location_number_wpp;
+		                	//Table first
+		                	$('#div_tbl_loc_number_wpp').append('<p><b>{% trans "Number of water points problems" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tbl_loc_wpp" class="table table-striped table-bordered table-condensed">');
+		                	$('#tbl_loc_wpp').append('<thead>' +
+											'<th>{% trans "Colline" %}</th><th>{% trans "Number of water points problems" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+		                	//Add rows in the table
+							for (var i = 0; i < loc_number_wpp.length; i++){
+								$('#tbl_loc_wpp').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+								$('#tbl_loc_wpp tr:last').append('<td>' + loc_number_wpp[i]["name"] +'</td>');
+								$('#tbl_loc_wpp tr:last').append('<td>' + loc_number_wpp[i]["y"] +'</td>');
+							}
+							$('#tbl_loc_wpp').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
 
 
 		                	}else {
@@ -299,8 +344,18 @@
 		<div id="divpb" class="form-inline" style="padding-left :5px; padding-right :5px;">
 		</div>
 
+		<div id="container" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
+		</div>
 
-		<div id="container" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+		<hr>
+		<hr>
+
+		<div id="div_tbl_loc_number_wpp" class="form-inline" style="padding-left :5px; padding-right :5px;">
+		</div>
+
+		<hr>
+
+		<div id="div_chart_loc_wpp" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 
 	</div>
 

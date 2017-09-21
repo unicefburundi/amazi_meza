@@ -68,6 +68,7 @@ def getCollinesInCommune(request):
 
 
 def getwanteddata(request):
+    #View for "Problems" page
     response_data = {}
     if request.method == 'POST':
         #import pdb; pdb.set_trace()
@@ -135,10 +136,20 @@ def getwanteddata(request):
         rows = json.dumps(rows, default=date_handler)
         pieChart_freq_pbm_cat = json.dumps(pieChart_freq_pbm_cat, default=date_handler)
 
-        all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
 
-        print(all_data)
+        number_wp_pb_per_loc = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("water_point__colline__name").annotate(number=Count('water_point__colline__name'))
 
+        bar_chart_location_number_wpp = []
+        for lo in number_wp_pb_per_loc:
+            one_item = {}
+            one_item["name"] = lo["water_point__colline__name"]
+            one_item["y"] = lo["number"]
+            one_item["name: 'Mi"] = lo["water_point__colline__name"]
+            bar_chart_location_number_wpp.append(one_item)
+
+
+        #all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
+        all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,  'location_number_wpp': bar_chart_location_number_wpp,})
         return HttpResponse(all_data, content_type="application/json")
 
 
