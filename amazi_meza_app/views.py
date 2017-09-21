@@ -224,7 +224,18 @@ def get_expenditures_info(request):
                 barChart_location_expenditure.append(one_item)
 
 
-            all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_cat, 'location_expendi': barChart_location_expenditure,})
+            #Compute icome per location
+            income_per_location = MonthlyIncome.objects.filter(commune__in = commune_list, reception_date__range = (start_date, end_date)).values("commune__name").annotate(number=Sum('total_income'))
+            barChart_location_income = []
+            for in_loc in income_per_location:
+                one_item = {}
+                one_item["name"] = in_loc["commune__name"]
+                one_item["y"] = in_loc["number"]
+                one_item["name: 'Mi"] = in_loc["commune__name"]
+                barChart_location_income.append(one_item)
+
+
+            all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_cat, 'location_expendi': barChart_location_expenditure, 'location_income': barChart_location_income,})
 
     return HttpResponse(all_data, content_type="application/json")
 
