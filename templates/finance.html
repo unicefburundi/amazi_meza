@@ -283,7 +283,7 @@
 		                	//location_expenditure = JSON.parse(response.location_expendi);
 		                	location_expenditure = response.location_expendi;
 		                	//Table first
-		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "Expenditure" %}</b></p>' +
+		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "Total expenditure" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -323,7 +323,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Expenditure per location'
+								        text: 'Total expenditure per location'
 								    },
 								    xAxis: {
 								        type: 'category'
@@ -361,7 +361,7 @@
 							//Let desplay incomes per location table and chart
 		                	location_income = response.location_income;
 		                	//Table first
-		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "Income" %}</b></p>' +
+		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "Total income" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -400,7 +400,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Income per location'
+								        text: 'Total income per location'
 								    },
 								    xAxis: {
 								        type: 'category'
@@ -524,7 +524,6 @@
 		<div id="div_fin_tbl" class="form-inline" style="padding-left :5px; padding-right :5px;">
 		</div>
 
-		<hr>
 
 		<div id="div_container_pchart" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 			
@@ -536,7 +535,6 @@
 		<div id="div_tbl_loc_exp" class="form-inline" style="padding-left :5px; padding-right :5px;">
 		</div>
 
-		<hr>
 
 		<div id="div_chart_loc_exp" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 			
@@ -548,7 +546,6 @@
 		<div id="div_tbl_loc_inc" class="form-inline" style="padding-left :5px; padding-right :5px;">
 		</div>
 
-		<hr>
 
 		<div id="div_chart_loc_inc" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 			

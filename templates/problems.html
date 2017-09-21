@@ -137,7 +137,7 @@
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	if (response.rows.length > 0) {
-		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINT PROBLEMS" %}</b></p>' +
+		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINTS PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -199,7 +199,7 @@
 							            type: 'pie'
 							        },
 							        title: {
-							            text: 'Reported water point problem categories'
+							            text: 'Reported water points problems categories'
 							        },
 							        tooltip: {
 							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -259,6 +259,47 @@
 								            'copy', 'csv', 'excel', 'pdf', 'print'
 								        ]
 									});
+							//In bar chart
+							Highcharts.chart('div_chart_loc_wpp', {
+								    chart: {
+								        type: 'column'
+								    },
+								    title: {
+								        text: 'Number of water points problems per location'
+								    },
+								    xAxis: {
+								        type: 'category'
+								    },
+								    yAxis: {
+								    	tickInterval: 1,
+								        title: {
+								            text: 'Number of water points problems'
+								        }
+
+								    },
+								    legend: {
+								        enabled: false
+								    },
+								    plotOptions: {
+								        series: {
+								            borderWidth: 0,
+								            dataLabels: {
+								                enabled: true,
+								            }
+								        }
+								    },
+								    tooltip: {
+								        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+								        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+								    },
+
+								    series: [{
+								        name: 'Income',
+								        colorByPoint: true,
+								        data: loc_number_wpp
+								    }],
+								});
+
 
 
 
@@ -352,8 +393,6 @@
 
 		<div id="div_tbl_loc_number_wpp" class="form-inline" style="padding-left :5px; padding-right :5px;">
 		</div>
-
-		<hr>
 
 		<div id="div_chart_loc_wpp" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 

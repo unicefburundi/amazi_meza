@@ -313,6 +313,5 @@ def get_number_of_water_points(request):
         
         data = json.dumps(barChart_location_number_of_wp, default=date_handler)
 
-        print(data)
 
         return HttpResponse(data, content_type="application/json")
