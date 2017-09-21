@@ -55,6 +55,8 @@
 
 			$('#div_tbl_loc_number_wp').empty();
 			$('#loc_number_of_wp_chart_container').empty();
+			$('#div_tbl_loc_exp').empty();
+			$('#div_chart_loc_exp').empty();
 			if (code) {
 				//initializesonic();
 				ajaxurl = 'getcommunesinprovince';
@@ -73,6 +75,8 @@
 		    });*/
 
 			$('#div_fin_tbl').empty();
+			$('#div_tbl_loc_exp').empty();
+			$('#div_chart_loc_exp').empty();
 			if (code) {
 				//initializesonic();
 
@@ -127,6 +131,8 @@
 		    		}
 
 					$('#div_fin_tbl').empty();
+					$('#div_tbl_loc_exp').empty();
+					$('#div_chart_loc_exp').empty();
 
 		    		if (level && code && start_date && end_date) {
 				        data = JSON.stringify({ 'level': level, 'code': code, 'start_date': start_date, 'end_date': end_date });
@@ -265,6 +271,48 @@
 		                	/*}else {
 		                		$('#div_fin_tbl').append('<p style="color:red;">No records found</p>');
 		                	}*/
+
+
+		                	//Let desplay expenditure per location table and chart
+		                	//location_expenditure = JSON.parse(response.location_expendi);
+		                	location_expenditure = response.location_expendi;
+		                	//Table first
+		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "Expenditure" %}</b></p>' +
+
+									'<div style="clear:both; height:10px;"></div>' +
+
+									'<table id="tbl_loc_exp" class="table table-striped table-bordered table-condensed">');
+		                	$('#tbl_loc_exp').append('<thead>' +
+											'<th>{% trans "Commune" %}</th><th>{% trans "Expenditure" %}</th>' +
+										'</thead>' +
+											
+										'<tbody>' +
+											
+										'</tbody>');
+		                	//Add rows in the table
+							for (var i = 0; i < location_expenditure.length; i++){
+								$('#tbl_loc_exp').find('tbody').append('<tr style="cursor:pointer;"></tr>');
+
+								$('#tbl_loc_exp tr:last').append('<td>' + location_expenditure[i]["name"] +'</td>');
+								$('#tbl_loc_exp tr:last').append('<td>' + location_expenditure[i]["y"] +'</td>');
+							}
+
+							$('#tbl_loc_exp').DataTable({
+										dom: "<'row'<'col-sm-3'l><'col-sm-4'i><'col-sm-5'f>>" +
+											"<'row'<'col-sm-12'tr>>" +
+											"<'row'<'col-sm-4'B><'col-sm-8'p>>",
+										pagingType: "full_numbers",
+										lengthMenu: [
+								            [10, 25, 50, 100, -1 ],
+								            ['10', '25', '50', '100', 'All' ]
+								        ],
+								        buttons: [
+								            'copy', 'csv', 'excel', 'pdf', 'print'
+								        ]
+									});
+
+
+
 		                	}
 
 		                $('#overlay').remove();
@@ -354,6 +402,18 @@
 		<hr>
 
 		<div id="div_container_pchart" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
+			
+		</div>
+
+		<hr>
+		<hr>
+
+		<div id="div_tbl_loc_exp" class="form-inline" style="padding-left :5px; padding-right :5px;">
+		</div>
+
+		<hr>
+
+		<div id="div_chart_loc_exp" style="min-width: 300px; height: 400px; max-width: 600px; margin: 0 auto">
 			
 		</div>
 
