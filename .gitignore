@@ -18,3 +18,5 @@ fixtures/
 *.json
 *.sql
 static/
+*sublime*
+*sqlit*

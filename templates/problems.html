@@ -137,14 +137,14 @@
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	if (response.rows.length > 0) {
-		                		$('#divpb').append('<p><b>{% trans "REPORTED WATER POINTS PROBLEMS" %}</b></p>' +
+		                		$('#divpb').append('<p><b>{% trans "REPORTED PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
 									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
 									
 								$('#tblpb').append('<thead>' +
-										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Report Date" %}</th><th>{% trans "Status" %}</th><th>{% trans "Resolve Date" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Date Reported " %}</th><th>{% trans "Status" %}</th><th>{% trans "Date Resolved" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
@@ -199,7 +199,7 @@
 							            type: 'pie'
 							        },
 							        title: {
-							            text: 'Reported water points problems categories'
+							            text: 'Reported problems'
 							        },
 							        tooltip: {
 							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -218,7 +218,10 @@
 							            name: 'Brands',
 							            colorByPoint: true,
 							            data: ReportedWPProblemsCategories
-							        }]
+							        }],
+							        credits: {
+									      enabled: false
+									  },
 							    });
 
 
@@ -298,6 +301,9 @@
 								        colorByPoint: true,
 								        data: loc_number_wpp
 								    }],
+							        credits: {
+									      enabled: false
+									  },
 								});
 
 
