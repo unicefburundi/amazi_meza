@@ -112,13 +112,14 @@ def getwanteddata(request):
 
                 r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
 
+                if r["case_of_diarrhea"]:
+                    r["case_of_diarrhea"] = "Yes"
+                else:
+                    r["case_of_diarrhea"] = "No"
 
             #wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
             wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_description").annotate(number=Count('problem__problem_type_description'))
 
-            
-            print("==")
-            print(wp_pb_reports)
 
             frequent_problems_categ = []
 
