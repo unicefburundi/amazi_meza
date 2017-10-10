@@ -199,7 +199,7 @@
 							            type: 'pie'
 							        },
 							        title: {
-							            text: 'Reported problems'
+							            text: 'Reported Problems'
 							        },
 							        tooltip: {
 							            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -230,7 +230,7 @@
 							//Let's desplay number of water points problems per location (table and chart)
 		                	loc_number_wpp = response.location_number_wpp;
 		                	//Table first
-		                	$('#div_tbl_loc_number_wpp').append('<p><b>{% trans "Number of water points problems" %}</b></p>' +
+		                	$('#div_tbl_loc_number_wpp').append('<p><b>{% trans "COMMUNE/COLLINE WITH MOST REPORTED PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -268,7 +268,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Number of water points problems per location'
+								        text: 'Commune/Colline with Most Reported Problems'
 								    },
 								    xAxis: {
 								        type: 'category'
