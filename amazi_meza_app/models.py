@@ -124,6 +124,7 @@ class ExpectedBudgetExpenditureAndAnnualBudget(models.Model):
 class WaterPointProblemTypes(models.Model):
 	''' In this model will be stored water points problem types '''
 	problem_type_name = models.CharField(max_length=50)
+	problem_type_description = models.CharField(max_length=50, default='')
 
 	def __unicode__(self):
 		return "{0}".format(self.problem_type_name)
