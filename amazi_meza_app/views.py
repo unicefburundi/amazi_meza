@@ -113,14 +113,18 @@ def getwanteddata(request):
                 r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
 
 
-            wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
+            #wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
+            wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_description").annotate(number=Count('problem__problem_type_description'))
+
             
+            print("==")
+            print(wp_pb_reports)
 
             frequent_problems_categ = []
 
             for r in wp_pb_reports:
                 obj = {}
-                obj[unicodedata.normalize('NFKD', r["problem__problem_type_name"]).encode('ascii','ignore')] = r["number"]
+                obj[unicodedata.normalize('NFKD', r["problem__problem_type_description"]).encode('ascii','ignore')] = r["number"]
                 frequent_problems_categ.append(obj)
 
             data_pieChart = []
