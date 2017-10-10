@@ -66,12 +66,10 @@ def getCollinesInCommune(request):
         return HttpResponse(response_data, content_type="application/json")
 
 
-
 def getwanteddata(request):
-    #View for "Problems" page
+    # View for "Problems" page
     response_data = {}
     if request.method == 'POST':
-        #import pdb; pdb.set_trace()
         json_data = json.loads(request.body)
         level = json_data['level']
         code = json_data['code']
@@ -83,19 +81,19 @@ def getwanteddata(request):
         if (level):
             colline_list = None
             if (level == "colline"):
-                colline_list = Colline.objects.filter(code = code)
+                colline_list = Colline.objects.filter(code=code)
 
             elif (level == "commune"):
-                commune_list = Commune.objects.filter(code = code)
+                commune_list = Commune.objects.filter(code=code)
                 if (commune_list):
-                    colline_list = Colline.objects.filter(commune__in = commune_list)
+                    colline_list = Colline.objects.filter(commune__in=commune_list)
             elif (level == "national"):
                 colline_list = Colline.objects.all()
 
             end_date = datetime.datetime.strptime(end_date, '%Y-%m-%d').date()
 
             if (colline_list):
-                wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1)))
+                wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in=colline_list, report_date__range=(start_date, end_date + datetime.timedelta(days=1)))
 
             wp_pb_reports_1 = serializers.serialize('python', wp_pb_reports)
             columns = [r['fields'] for r in wp_pb_reports_1]
@@ -103,31 +101,26 @@ def getwanteddata(request):
             rows = json.loads(response_data)
 
             for r in rows:
-                concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id = r["water_point"])
+                concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id=r["water_point"])
                 r["colline_name"] = concerned_w_s_endpoint.colline.name
                 r["commune_name"] = concerned_w_s_endpoint.colline.commune.name
 
-                concerned_w_p_pbm_type = WaterPointProblemTypes.objects.get(id = r["problem"])
+                concerned_w_p_pbm_type = WaterPointProblemTypes.objects.get(id=r["problem"])
                 r["w_p_pbm_type_name"] = concerned_w_p_pbm_type.problem_type_name
 
-                r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
+                r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii', 'ignore')[0:10]
 
 
-            #wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
-            wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_description").annotate(number=Count('problem__problem_type_description'))
-
-            
-            print("==")
-            print(wp_pb_reports)
+            # wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in = colline_list, report_date__range = (start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_name").annotate(number=Count('problem__problem_type_name'))
+            wp_pb_reports = WaterPointProblem.objects.filter(water_point__colline__in=colline_list, report_date__range=(start_date, end_date + datetime.timedelta(days=1))).values("problem__problem_type_description").annotate(number=Count('problem__problem_type_description'))
 
             frequent_problems_categ = []
 
             for r in wp_pb_reports:
                 obj = {}
-                obj[unicodedata.normalize('NFKD', r["problem__problem_type_description"]).encode('ascii','ignore')] = r["number"]
+                obj[unicodedata.normalize('NFKD', r["problem__problem_type_description"]).encode('ascii', 'ignore')] = r["number"]
                 frequent_problems_categ.append(obj)
 
-            data_pieChart = []
             pieChart_freq_pbm_cat = []
 
             for wpp in frequent_problems_categ:
@@ -152,10 +145,9 @@ def getwanteddata(request):
             bar_chart_location_number_wpp.append(one_item)
 
 
-        #all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
+        # all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,})
         all_data = json.dumps({'rows': rows, 'data': pieChart_freq_pbm_cat,  'location_number_wpp': bar_chart_location_number_wpp,})
         return HttpResponse(all_data, content_type="application/json")
-
 
 
 def get_expenditures_info(request):
