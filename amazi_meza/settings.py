@@ -174,7 +174,7 @@ EXPECTED_NUMBER_OF_VALUES = {
     'NETWORK_PROBLEM': 6,
 }
 
-
+LOGIN_REDIRECT_URL = '/'
 
 try:
     from localsettings import *

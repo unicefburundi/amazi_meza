@@ -276,17 +276,9 @@
 									  },
 							    });
 
-
-		                	/*}else {
-		                		$('#div_fin_tbl').append('<p style="color:red;">No records found</p>');
-		                	}*/
-
-
-		                	//Let desplay expenditure per location table and chart
-		                	//location_expenditure = JSON.parse(response.location_expendi);
 		                	location_expenditure = response.location_expendi;
 		                	//Table first
-		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE/COLLINE WITH HIGHEST EXPENDITURE" %}</b></p>' +
+		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE WITH HIGHEST EXPENDITURE" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -326,14 +318,14 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune/Colline with Highest Expenditure'
+								        text: 'Commune with Highest Expenditure'
 								    },
 								    xAxis: {
 								        type: 'category'
 								    },
 								    yAxis: {
 								        title: {
-								            text: 'Amount in Fbu'
+								            text: 'Expenditure'
 								        }
 
 								    },
@@ -366,7 +358,7 @@
 							//Let desplay incomes per location table and chart
 		                	location_income = response.location_income;
 		                	//Table first
-		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE/COLLINE WITH HIGHEST INCOME" %}</b></p>' +
+		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE WITH HIGHEST INCOME" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -405,14 +397,14 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune/Colline with Highest Income'
+								        text: 'Commune with Highest Income'
 								    },
 								    xAxis: {
 								        type: 'category'
 								    },
 								    yAxis: {
 								        title: {
-								            text: 'Amount in Fbu'
+								            text: 'Income'
 								        }
 
 								    },

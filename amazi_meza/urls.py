@@ -23,6 +23,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^amazimeza/', include('amazi_meza_app.urls')),
     url(r'^', include('amazi_meza_app.urls')),
-    url(r'^login/$', auth_views.login, name='login'),
+    url(r'^login/$', auth_views.login,  name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
 ]

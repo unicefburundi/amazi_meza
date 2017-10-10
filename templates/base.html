@@ -193,7 +193,7 @@
 										</div>
 										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<a href="/">
-											<span class="brand-app" style="text-align:center;">Amazi meza</span>
+											<span class="brand-app" style="text-align:center;">AMAZI MEZA</span>
 											</a>
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
@@ -221,10 +221,10 @@
 			{% block navbar %}
 				<div class="fitcontent" id="nav">
 					<ul id="menu-main_menu">
-						<li><a role="button" href="home">{% trans "Home" %}</a></li>
-						<li><a role="button" href="problems">{% trans "Problems" %}</a></li>
-						<li><a role="button" href="mapping">{% trans "Mapping" %}</a></li>
-						<li><a role="button" href="finance">{% trans "Finance" %}</a></li>
+						<li><a role="button" href="{% url 'landing' %} ">{% trans "Home" %}</a></li>
+						<li><a role="button" href="{% url 'problems' %} ">{% trans "Problems" %}</a></li>
+						<li><a role="button" href="{% url 'mapping' %} ">{% trans "Mapping" %}</a></li>
+						<li><a role="button" href="{% url 'finance' %} ">{% trans "Finance" %}</a></li>
 					</ul>
 				</div>
 			{% endblock %}
