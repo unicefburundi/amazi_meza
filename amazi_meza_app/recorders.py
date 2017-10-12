@@ -613,11 +613,14 @@ def record_problem_report(args):
     else:
         args['is_there_diarrhea_case'] = False
 
+    
+    wpp_code = WaterPointProblem.objects.filter(water_point = args['concerned_water_point']).count()
+
 
     #Let's record the problem report
-    WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'])
+    WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'], wpp_code = wpp_code)
 
-    args['info_to_contact'] = "Le rapport de panne est bien recu"
+    args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
 
 
 
