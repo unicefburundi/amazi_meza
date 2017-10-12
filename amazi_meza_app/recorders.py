@@ -598,9 +598,9 @@ def record_problem_report(args):
         args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'YES' ou 'NO'"
         return
     if(args['text'].split('#')[4].upper() != "YES"):
-        args['problem_solved'] = True
+        args['problem_solved'] = False
     else:
-        args['problem_solved']  = False
+        args['problem_solved']  = True
 
 
     #The value at the position 4 should be yes or no
@@ -609,9 +609,9 @@ def record_problem_report(args):
         args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'YES' ou 'NO'"
         return
     if(args['text'].split('#')[5].upper() != "YES"):
-        args['is_there_diarrhea_case'] = True
-    else:
         args['is_there_diarrhea_case'] = False
+    else:
+        args['is_there_diarrhea_case'] = True
 
     
     wpp_code = WaterPointProblem.objects.filter(water_point = args['concerned_water_point']).count()
@@ -621,6 +621,50 @@ def record_problem_report(args):
     WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'], wpp_code = wpp_code)
 
     args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
+
+
+def record_problem_resolution_report(args):
+    ''' This function is used to record a water point problem resolution'''
+
+    args['mot_cle'] = "PR"
+
+    check_if_is_colline_level_reporter(args)
+    if not args['valide']:
+        # This contact is not a colline level reporter
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        return
+
+    # Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    #Let's identify the water point this reporter reports for
+    identify_water_point(args)
+    if not args['valide']:
+        return
+
+    #Let's check if the value sent for water point problem code is valid
+    args['number_to_check'] = args['text'].split('#')[1]
+    args['value_meaning'] = "Code de la panne"
+    check_is_number(args)
+    if not args['valide']:
+        return
+    args['wpp_code'] = int(args['number_to_check'])
+
+
+    concerned_wpp = WaterPointProblem.objects.filter(water_point = args['concerned_water_point'], wpp_code = args['wpp_code'])
+    if(len(concerned_wpp) > 0):
+        concerned_wpp = concerned_wpp[0]
+        concerned_wpp.problem_solved = True
+        concerned_wpp.save()
+        args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
+    else:
+        args['valide'] = False
+        args['info_to_contact'] = "Erreur. Il n y a pas de probleme de code '"+str(args['wpp_code'])+"'"
+
 
 
 
