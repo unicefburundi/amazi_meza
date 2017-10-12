@@ -6,7 +6,7 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="csrf_token" content="{{ csrf_token }}">
-		
+		<link rel="shortcut icon" href="{%  static 'favicon.ico' %}">
 		<title>UNICEF BURUNDI | {% if pagetitle %} | {{ pagetitle }}{% endif %}</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -189,7 +189,7 @@
 								<h1 class="bet-logo">
 									<!--<a href="/">-->
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
-											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
+											<img class="noborder size-full aligncenter img-rounded" src="{% static 'images/robbinet 2.jpg' %}" scale="0">
 										</div>
 										<div class="col-sm-9 verticallineseparator" style="padding-left:5px; padding-right:5px;">
 											<a href="/">
@@ -197,7 +197,7 @@
 											</a>
 										</div>
 										<div class="col-sm-1" style="padding-left:5px; padding-right:5px;">
-											<img class="noborder size-full aligncenter" src="{% static 'images/burundi.png' %}" scale="0">
+											<img class="noborder size-full aligncenter" src="{% static 'images/unicef-cyan-logo.png' %}" scale="0">
 										</div>
 									<!--</a>-->
 									{% if user.is_authenticated %}
