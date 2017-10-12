@@ -204,6 +204,9 @@ class WaterSourceEndPoint(models.Model):
     network = models.ForeignKey(WaterNetWork)
     reporter = models.ForeignKey(LocalLevelReporter)
     date_registered = models.DateTimeField(auto_now_add=True)
+    number_of_households = models.IntegerField(default=0)
+    number_of_vulnerable_households = models.IntegerField(default=0)
+    water_point_functional = models.BooleanField(default=True)
 
     def __unicode__(self):
         return "{0} - {1} - {2} - {3} - {4} - {5}".format(self.water_point_name, self.water_point_type, self.colline, self.network, self.reporter, self.date_registered)

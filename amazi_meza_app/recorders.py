@@ -508,9 +508,37 @@ def record_local_reporter(args):
         if not args['valide']:
             return
 
+        #Let's check if the value sent for number of households is valid
+        args['number_to_check'] = args['text'].split('#')[7]
+        args['value_meaning'] = "Nombre de menages"
+        check_is_number(args)
+        if not args['valide']:
+            return
+        args['number_of_households'] = int(args['number_to_check'])
+
+        #Let's check if the value sent for number of vulnerable households is valid
+        args['number_to_check'] = args['text'].split('#')[8]
+        args['value_meaning'] = "Nombre de menages vulnerables"
+        check_is_number(args)
+        if not args['valide']:
+            return
+        args['number_of_vulnerable_households'] = int(args['number_to_check'])
+
+
+        #The value at the position 9 should be yes or no
+        if(args['text'].split('#')[9].upper() != "YES" and  args['text'].split('#')[4].upper() != "NO"):
+            args['valide'] = False
+            args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'YES' ou 'NO'"
+            return
+        if(args['text'].split('#')[9].upper() != "YES"):
+            args['wp_works'] = True
+        else:
+            args['wp_works']  = False
+
+
         #Let's record the reporter
         reporter = LocalLevelReporter.objects.create(reporter_phone_number = args['phone'], reporter_name = args["reporter_name"], colline = args["concerned_colline"])
-        WaterSourceEndPoint.objects.create(water_point_name = args["water_point_name"], water_point_type = args["concerned_water_point_type"], colline = args["concerned_colline"], network = args["concerned_water_network"], reporter = reporter)
+        WaterSourceEndPoint.objects.create(water_point_name = args["water_point_name"], water_point_type = args["concerned_water_point_type"], colline = args["concerned_colline"], network = args["concerned_water_network"], reporter = reporter, number_of_households = args['number_of_households'], number_of_vulnerable_households = args['number_of_vulnerable_households'], water_point_functional = args['wp_works'])
 
         args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
 
@@ -564,7 +592,7 @@ def record_problem_report(args):
     if not args['valide']:
         return
 
-    #The value at the position 4 should be yes or not
+    #The value at the position 4 should be yes or no
     if(args['text'].split('#')[4].upper() != "YES" and  args['text'].split('#')[4].upper() != "NO"):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'YES' ou 'NO'"
@@ -575,7 +603,7 @@ def record_problem_report(args):
         args['problem_solved']  = False
 
 
-    #The value at the position 4 should be yes or not
+    #The value at the position 4 should be yes or no
     if(args['text'].split('#')[5].upper() != "YES" and  args['text'].split('#')[5].upper() != "NO"):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'YES' ou 'NO'"
