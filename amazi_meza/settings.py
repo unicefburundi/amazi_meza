@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'amazi_meza_app',
     'public_administration_structure_app',
+    'import_export',
 ]
 
 MIDDLEWARE_CLASSES = [
