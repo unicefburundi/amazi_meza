@@ -229,7 +229,7 @@ class WaterPointProblem(models.Model):
     action_taken = models.ForeignKey(ActionsForWaterPointProblem)
     days = models.IntegerField()
     problem_solved = models.BooleanField(default=False)
-    resolve_date = models.DateTimeField(null=True, blank=True)
+    resolve_date = models.DateField(null=True, blank=True)
     case_of_diarrhea = models.BooleanField(default=False)
     report_date = models.DateTimeField(auto_now_add=True)
     wpp_code = models.IntegerField(default=0)

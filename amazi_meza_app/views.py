@@ -103,6 +103,7 @@ def getwanteddata(request):
             response_data = json.dumps(columns, default=date_handler)
             rows = json.loads(response_data)
 
+
             for r in rows:
                 concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id=r["water_point"])
                 r["colline_name"] = concerned_w_s_endpoint.colline.name
@@ -117,6 +118,13 @@ def getwanteddata(request):
                     r["case_of_diarrhea"] = "Yes"
                 else:
                     r["case_of_diarrhea"] = "No"
+
+                if r["problem_solved"]:
+                    r["problem_solved"] = "Resolved"
+                else:
+                    r["problem_solved"] = "Not yet resolved"
+                    r["resolve_date"] = ""
+
 
                 #r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii', 'ignore')[0:10]
 

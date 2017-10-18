@@ -659,6 +659,7 @@ def record_problem_resolution_report(args):
     if(len(concerned_wpp) > 0):
         concerned_wpp = concerned_wpp[0]
         concerned_wpp.problem_solved = True
+        concerned_wpp.resolve_date = datetime.datetime.now().date()
         concerned_wpp.save()
         args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
     else:
