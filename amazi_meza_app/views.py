@@ -307,7 +307,7 @@ def exp_vs_in(request):
                 one_item["month_number"] = i["reporting_month"]
                 one_item["y"] = i["number"]
                 one_item["month_name"] = months_mames[str(i["reporting_month"])]
-                inc.append(one_item)
+                exp.append(one_item)
 
             inc = sorted(inc, key=itemgetter('month_number'))
             exp = sorted(exp, key=itemgetter('month_number'))
