@@ -409,7 +409,7 @@
 
 		                	location_expenditure = response.location_expendi;
 		                	//Table first
-		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE WITH HIGHEST EXPENDITURE" %}</b></p>' +
+		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE BY EXPENDITURE" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -449,7 +449,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune with Highest Expenditure'
+								        text: 'Commune by Expenditure'
 								    },
 								    xAxis: {
 								        type: 'category'
@@ -489,7 +489,7 @@
 							//Let desplay incomes per location table and chart
 		                	location_income = response.location_income;
 		                	//Table first
-		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE WITH HIGHEST INCOME" %}</b></p>' +
+		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE BY INCOME" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -528,7 +528,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune with Highest Income'
+								        text: 'Commune by Income'
 								    },
 								    xAxis: {
 								        type: 'category'
