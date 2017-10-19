@@ -386,13 +386,17 @@ def get_number_of_water_points(request):
                 commune_list = Commune.objects.filter(code = code)
                 if (commune_list):
                     colline_list = Colline.objects.filter(commune__in = commune_list)
-                    location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__name").annotate(number=Count('colline__commune__name'))
-            
+                    #location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__name").annotate(number=Count('colline__commune__name'))
+                    location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__name").annotate(number=Count('colline__name'))
+
+
                     for wpl in location_number_of_wp:
                         one_item = {}
-                        one_item["name"] = wpl["colline__commune__name"]
+                        #one_item["name"] = wpl["colline__commune__name"]
+                        one_item["name"] = wpl["colline__name"]
                         one_item["y"] = wpl["number"]
-                        one_item["name: 'Mi"] = wpl["colline__commune__name"]
+                        #one_item["name: 'Mi"] = wpl["colline__commune__name"]
+                        one_item["name: 'Mi"] = wpl["colline__name"]
                         barChart_location_number_of_wp.append(one_item)
             elif (level == "province"):
                 province_list = Province.objects.filter(code = code)
