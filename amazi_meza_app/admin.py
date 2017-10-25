@@ -83,6 +83,10 @@ class ActionsForWaterPointProblemAdmin(ImportExportModelAdmin):
     pass
 
 
+@admin.register(WaterPointProblemResolver)
+class WaterPointProblemResolverAdmin(ImportExportModelAdmin):
+    pass
+
 @admin.register(WaterPointProblem)
 class WaterPointProblemAdmin(ImportExportModelAdmin):
     pass
