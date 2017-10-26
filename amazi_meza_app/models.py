@@ -246,3 +246,30 @@ class WaterPointProblem(models.Model):
 
     def __unicode__(self):
         return "{0} - {1} - {2} - {3} - {4} - {5}".format(self.water_point, self.problem, self.days, self.action_taken, self.problem_solved, self.report_date)
+
+
+
+
+class TimeMeasuringUnit(models.Model):
+    '''
+    This model is used to store time measuring units
+    '''
+    code = models.CharField(max_length=4)
+    description = models.CharField(max_length=20)
+
+    def __unicode__(self):
+        return "{0} - {1}".format(self.code, self.description)
+
+
+class Setting(models.Model):
+    '''
+    In this model we will put settings
+    '''
+    setting_code = models.CharField(max_length=20)
+    setting_name = models.CharField(max_length=200)
+    setting_value = models.CharField(max_length=100)
+    time_measuring_unit = models.ForeignKey(TimeMeasuringUnit, null=True)
+    # Change the above line. It should accept null. It doesn't accept null values for the moment
+
+    def __unicode__(self):
+        return "{0} - {1}".format(self.setting_name, self.setting_value)

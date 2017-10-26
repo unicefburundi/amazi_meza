@@ -100,3 +100,13 @@ class TemporaryLocalLevelReporterAdmin(ImportExportModelAdmin):
 @admin.register(TemporaryCommuneLevelReporters)
 class TemporaryCommuneLevelReportersAdmin(ImportExportModelAdmin):
     pass
+
+
+@admin.register(TimeMeasuringUnit)
+class TimeMeasuringUnitAdmin(ImportExportModelAdmin):
+    pass
+
+
+@admin.register(Setting)
+class SettingAdmin(ImportExportModelAdmin):
+    pass
