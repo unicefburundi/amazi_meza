@@ -104,6 +104,14 @@ def getwanteddata(request):
             rows = json.loads(response_data)
 
 
+            wpp_resolvers = {}
+            resolvers_set = WaterPointProblemResolver.objects.all()
+            if len(resolvers_set) > 0:
+                for r in resolvers_set:
+                    #wpp_resolvers[r.resolver_level_code] = r.resolver_level_name
+                    wpp_resolvers[r.id] = unicodedata.normalize('NFKD', r.resolver_level_name).encode('ascii', 'ignore')
+
+
             for r in rows:
                 concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id=r["water_point"])
                 r["colline_name"] = concerned_w_s_endpoint.colline.name
@@ -125,6 +133,11 @@ def getwanteddata(request):
                     r["problem_solved"] = "Not yet resolved"
                     r["resolve_date"] = ""
 
+                if r["resolved_at"]:
+                    resolver_level = r["resolved_at"]
+                    r["resolver_level"] = wpp_resolvers[resolver_level]
+                else:
+                    r["resolver_level"] = " "
 
                 #r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii', 'ignore')[0:10]
 
