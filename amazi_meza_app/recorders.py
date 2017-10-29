@@ -254,6 +254,26 @@ def check_action_taken_valid(args):
         args["valide"] = False
         args["info_to_contact"] = "Erreur. Votre action face a ce probleme de point d eau n est pas reconnu"
 
+
+
+def check_resolver_is_valid(args):
+    ''' This function checks if the action taken sent is valid '''
+
+    resolver_level = args["resolver"]
+
+    resolver_level_set = WaterPointProblemResolver.objects.filter(resolver_level_code__iexact = resolver_level)
+
+    if len(resolver_level_set) > 0:
+        args["valide"] = True
+        args["resolver_level"] = resolver_level_set[0]
+        args["info_to_contact"] = "Le niveau qui a resolu le probleme est reconnu"
+    else:
+        args["valide"] = False
+        args["info_to_contact"] = "Erreur. Le niveau qui a resolu le probleme n est pas reconnu"
+
+
+
+
 def check_number_of_days_valid(args):
     ''' This function checks if the number of days sent is valid '''
 
@@ -655,10 +675,19 @@ def record_problem_resolution_report(args):
     args['wpp_code'] = int(args['number_to_check'])
 
 
+    #Let's check if the value sent for resolver level is valid
+    args["resolver"] = args['text'].split('#')[2]
+    check_resolver_is_valid(args)
+    if not args['valide']:
+        return
+
+
     concerned_wpp = WaterPointProblem.objects.filter(water_point = args['concerned_water_point'], wpp_code = args['wpp_code'])
     if(len(concerned_wpp) > 0):
         concerned_wpp = concerned_wpp[0]
         concerned_wpp.problem_solved = True
+        concerned_wpp.resolve_date = datetime.datetime.now().date()
+        concerned_wpp.resolved_at = args["resolver_level"]
         concerned_wpp.save()
         args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
     else:

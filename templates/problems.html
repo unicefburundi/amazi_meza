@@ -144,7 +144,7 @@
 									'<table id="tblpb" class="table table-striped table-bordered table-condensed">');
 									
 								$('#tblpb').append('<thead>' +
-										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Date Reported " %}</th><th>{% trans "Status" %}</th><th>{% trans "Date Resolved" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
+										'<th>{% trans "Commune" %}</th><th>{% trans "Colline" %}</th><th>{% trans "Problem Category" %}</th><th>{% trans "Date Reported " %}</th><th>{% trans "Status" %}</th><th>{% trans "Date Resolved" %}</th><th>{% trans "Resolved By" %}</th><th>{% trans "Diarrhea Cases" %}</th>' +
 									'</thead>' +
 										
 									'<tbody>' +
@@ -163,8 +163,9 @@
 									$('#tblpb tr:last').append('<td>' + problemReports[i]["colline_name"] +'</td>');
 									$('#tblpb tr:last').append('<td>' + problemReports[i]["w_p_pbm_type_name"] +'</td>');
 									$('#tblpb tr:last').append('<td>' + problemReports[i]["report_date"] +'</td>');
-									$('#tblpb tr:last').append('<td> - </td>');
-									$('#tblpb tr:last').append('<td> - </td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["problem_solved"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["resolve_date"] +'</td>');
+									$('#tblpb tr:last').append('<td>' + problemReports[i]["resolver_level"] +'</td>');
 									$('#tblpb tr:last').append('<td>' + problemReports[i]["case_of_diarrhea"] +'</td>');
 
 								}
@@ -230,7 +231,7 @@
 							//Let's desplay number of water points problems per location (table and chart)
 		                	loc_number_wpp = response.location_number_wpp;
 		                	//Table first
-		                	$('#div_tbl_loc_number_wpp').append('<p><b>{% trans "COMMUNE/COLLINE WITH MOST REPORTED PROBLEMS" %}</b></p>' +
+		                	$('#div_tbl_loc_number_wpp').append('<p><b>{% trans "COMMUNE/COLLINE BY NUMBER OF REPORTED PROBLEMS" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 

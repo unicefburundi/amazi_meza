@@ -30,6 +30,14 @@
 				{% endfor %}
 			}
 
+			if ("{{ all_communes }}") {
+				{% for c in all_communes %}
+					$('#pbcommune_2').append('<option value="{{ c.code }}">{{ c.name }}</option>');
+				{% endfor %}
+			}
+
+			$('#div_year').append('<option value="2017">2017</option>');
+
 			if ("{{ expenditures }}"){
 				{% for e in expenditures %}
 					$('#exp_category').append('<option value="{{ e.priority }}">{{ e.expenditure_category_name }}</option>');
@@ -69,6 +77,30 @@
 	        }
 		}
 
+		function fetchCommunes2(code) {
+			$("#pbcommune_2 option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });
+		    /*$("#pbcolline option").each(function(){
+        		if ($(this).val()) {
+        			$(this).remove();
+        		}
+		    });*/
+
+			$('#div_chart_exp_in').empty();
+
+			if (code) {
+				//initializesonic();
+				ajaxurl = 'getcommunesinprovince';
+	            data = JSON.stringify({ 'code': code });
+
+	            ajaxpostbackfunction = "fetchcommunes2";
+	            ajaxpost(ajaxurl, data);
+	        }
+		}
+
 		function fetchCollines(code) {
 			/*$("#pbcolline option").each(function(){
         		if ($(this).val()) {
@@ -91,6 +123,7 @@
 	            ajaxpost(ajaxurl, data);
 	        }
 		}
+
 
 		function fetchwanteddata() {
 					if (new Date($('#pbtartdate').val()) > new Date($('#pbendtdate').val())) {
@@ -152,6 +185,53 @@
 			    }
 
 
+		function fetchwanteddata2() {
+					if (new Date($('#pbtartdate').val()) > new Date($('#pbendtdate').val())) {
+		                messimsg = "Start date can not be a date after the End date";
+		                messititle = "Invalid Date Selection";
+		                titleanimation = "messierror";
+		                messiprompt(messimsg, messititle, titleanimation);
+		                $('#overlay').remove();
+		                return;
+					}
+			    	initializesonic();
+			    	
+			    	ajaxurl = 'get_exp_vs_in';
+		    		var level = null;
+		    		var code = null;
+		    		var year = null;
+
+
+	    			if($('#pbcommune_2').val() != ""){
+	    				level = "commune";
+	    				code = $('#pbcommune_2').val();
+	    			}else{
+		    			level = "national";
+		    			code = -1;	
+	    			}
+
+		    		if ($('#div_year').val() != "") {
+		    			year = $('#div_year').val();
+		    		}
+
+
+
+					$('#div_chart_exp_vs_in').empty();
+
+
+
+		    		if (level && code && year) {
+				        data = JSON.stringify({ 'level': level, 'code': code, 'year': year});
+
+			            ajaxpostbackfunction = "fetchwanteddata2";
+			            ajaxpost(ajaxurl, data);
+
+			        } else {
+			        	$('#overlay').remove();
+			        }
+			    }
+
+
 		function ajaxpost(posturl, data) {
 		        ajaxresults = null;
 		        $.ajax({
@@ -167,7 +247,14 @@
 		            dataType: 'json',
 
 		            success: function (response) {
-		            	if (ajaxpostbackfunction == "fetchcommunes") {
+		            	if (ajaxpostbackfunction == "fetchcommunes2") {
+		            		for (i = 0; i < response.length; i++) {
+		                		var code = jQuery.makeArray(response[i].fields)[0].code;
+		                		var name = jQuery.makeArray(response[i].fields)[0].name;
+		                		
+		                		$('#pbcommune_2').append('<option value=' + code +'>' + name + '</option>');
+    						}
+		            	} else if (ajaxpostbackfunction == "fetchcommunes") {
 		                	for (i = 0; i < response.length; i++) {
 		                		var code = jQuery.makeArray(response[i].fields)[0].code;
 		                		var name = jQuery.makeArray(response[i].fields)[0].name;
@@ -185,6 +272,50 @@
     						}
     						// fetch wanted data
 		                	fetchwanteddata();
+		                } else if (ajaxpostbackfunction == "fetchwanteddata2"){
+
+		                	//incomes = JSON.parse(response.incomes);
+		                	console.log(response.incomes);
+		                	console.log(">>>>>>");
+		                	console.log(response.expenditure);
+		                	income = response.incomes
+		                	expenditure = response.expenditures
+
+
+
+
+
+
+		                	Highcharts.chart('div_chart_exp_vs_in', {
+							    chart: {
+							        type: 'line'
+							    },
+							    title: {
+							        text: 'Income vs. Expenditure (Cumulative)'
+							    },
+							    xAxis: {
+							        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+							    },
+							    yAxis: {
+							        title: {
+							            text: 'Income/Expenditure'
+							        }
+							    },
+							    plotOptions: {
+							        line: {
+							            dataLabels: {
+							                enabled: true
+							            },
+							            enableMouseTracking: false
+							        }
+							    },
+							    series: [income, expenditure]
+							});
+
+
+
+
+
 		                }	else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	//if (response.rows.length > 0) {
 		                		$('#div_fin_tbl').append('<p><b>{% trans "EXPENDITURE PER CATEGORY" %}</b></p>' +
@@ -203,7 +334,7 @@
 								
 								//exp_reports = JSON.parse(response.exp_reports);
 								//exp_reports = exp_reports;
-								console.log(response);
+								//console.log(response);
 								exp_reports = JSON.parse(response.rows);
 
 
@@ -241,7 +372,7 @@
 
 								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
 
-						        console.log(ReportedWPProblemsCategories);
+						        //console.log(ReportedWPProblemsCategories);
 
 						         Highcharts.chart('div_container_pchart', {
 							        chart: {
@@ -278,7 +409,7 @@
 
 		                	location_expenditure = response.location_expendi;
 		                	//Table first
-		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE WITH HIGHEST EXPENDITURE" %}</b></p>' +
+		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE BY EXPENDITURE" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -318,7 +449,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune with Highest Expenditure'
+								        text: 'Commune by Expenditure'
 								    },
 								    xAxis: {
 								        type: 'category'
@@ -358,7 +489,7 @@
 							//Let desplay incomes per location table and chart
 		                	location_income = response.location_income;
 		                	//Table first
-		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE WITH HIGHEST INCOME" %}</b></p>' +
+		                	$('#div_tbl_loc_inc').append('<p><b>{% trans "COMMUNE BY INCOME" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
 
@@ -397,7 +528,7 @@
 								        type: 'column'
 								    },
 								    title: {
-								        text: 'Commune with Highest Income'
+								        text: 'Commune by Income'
 								    },
 								    xAxis: {
 								        type: 'category'
@@ -548,6 +679,34 @@
 
 		<div id="div_chart_loc_inc" style="margin: 0 auto">
 			
+		</div>
+
+		<hr>
+		<hr>
+
+		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
+			<!--<div class="form-group">
+				<label for="div_province_2">{% trans "Province:" %}</label>
+				<select id="div_province_2" class="form-control" style="width:140px" onchange="fetchCommunes2(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Province" %} ]</option>
+				</select>
+			</div>-->
+			<div class="form-group">
+				<label for="pbcommune_2">{% trans "Commune:" %}</label>
+				<select id="pbcommune_2" class="form-control" style="width:140px" onchange="fetchwanteddata2(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Select Commune" %} ]</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="div_year">{% trans "Year:" %}</label>
+				<select id="div_year" class="form-control" style="width:140px" onchange="fetchwanteddata2(this.value)" required="required">
+					<option value="" selected="selected">[ {% trans "Year" %} ]</option>
+				</select>
+			</div>
+		</div>
+
+		<div id="div_chart_exp_vs_in" style="margin: 0 auto">
+			<b>Select a commune and a year to display Income vs. Expenditure</b>
 		</div>
 
 	</div>

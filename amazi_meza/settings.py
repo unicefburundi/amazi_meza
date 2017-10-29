@@ -165,7 +165,7 @@ EXPECTED_NUMBER_OF_VALUES = {
     'LOCAL_SELF_REGISTRATION': 10,
     'RECORD_NETWORK': 2,
     'REPORT_PROBLEM': 6,
-    'REPORT_PROBLEM_RESOLUTION': 2,
+    'REPORT_PROBLEM_RESOLUTION': 3,
     'REPORT_BENEFICIARIES_BASE': 6,
     'REPORT_WATER_SOURCES_POINTS': 7,
     'REPORT_ADDITIONAL_WATER_SOURCES_POINTS': 7,
@@ -175,6 +175,21 @@ EXPECTED_NUMBER_OF_VALUES = {
     'REPORT_INCOME': 4,
     'REPORT_EXPENDITURE': 7,
     'NETWORK_PROBLEM': 6,
+}
+
+MONTHS_NAMES = {
+    '1':'January',
+    '2':'February',
+    '3':'March',
+    '4':'April',
+    '5':'May',
+    '6':'June',
+    '7':'July',
+    '8':'August',
+    '9':'September',
+    '10':'October',
+    '11':'November',
+    '12':'December',
 }
 
 LOGIN_REDIRECT_URL = '/'

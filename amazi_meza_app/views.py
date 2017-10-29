@@ -7,6 +7,8 @@ import datetime
 import pandas as pd
 import unicodedata
 from django.db.models import Count, Value, Sum
+from django.conf import settings
+from operator import itemgetter
 
 def date_handler(obj):
     if hasattr(obj, 'isoformat'):
@@ -40,6 +42,7 @@ def finance(request):
     d = {}
     d["pagetitle"] = "Finance"
     d["provinces"] = Province.objects.all()
+    d["all_communes"] = Commune.objects.all()
     d["expenditures"] = ExpenditureCategory.objects.all()
     return render(request, 'finance.html', d)
 
@@ -100,6 +103,15 @@ def getwanteddata(request):
             response_data = json.dumps(columns, default=date_handler)
             rows = json.loads(response_data)
 
+
+            wpp_resolvers = {}
+            resolvers_set = WaterPointProblemResolver.objects.all()
+            if len(resolvers_set) > 0:
+                for r in resolvers_set:
+                    #wpp_resolvers[r.resolver_level_code] = r.resolver_level_name
+                    wpp_resolvers[r.id] = unicodedata.normalize('NFKD', r.resolver_level_name).encode('ascii', 'ignore')
+
+
             for r in rows:
                 concerned_w_s_endpoint = WaterSourceEndPoint.objects.get(id=r["water_point"])
                 r["colline_name"] = concerned_w_s_endpoint.colline.name
@@ -114,6 +126,18 @@ def getwanteddata(request):
                     r["case_of_diarrhea"] = "Yes"
                 else:
                     r["case_of_diarrhea"] = "No"
+
+                if r["problem_solved"]:
+                    r["problem_solved"] = "Resolved"
+                else:
+                    r["problem_solved"] = "Not yet resolved"
+                    r["resolve_date"] = ""
+
+                if r["resolved_at"]:
+                    resolver_level = r["resolved_at"]
+                    r["resolver_level"] = wpp_resolvers[resolver_level]
+                else:
+                    r["resolver_level"] = " "
 
                 #r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii', 'ignore')[0:10]
 
@@ -251,7 +275,102 @@ def get_expenditures_info(request):
 
             all_data = json.dumps({'rows': exp_reports, 'data': pieChart_exp_cat, 'location_expendi': barChart_location_expenditure, 'location_income': barChart_location_income,})
 
+
+            
+
+
     return HttpResponse(all_data, content_type="application/json")
+
+
+
+def exp_vs_in(request):
+    if request.method == 'POST':
+        #import pdb; pdb.set_trace()
+        json_data = json.loads(request.body)
+
+        level = json_data['level']
+        code = json_data['code']
+        year = int(json_data['year'])
+
+
+        if (level):
+            commune_list = None
+            if (level == "commune"):
+                commune_list = Commune.objects.filter(code = code)
+                incomes = MonthlyIncome.objects.filter(commune__in = commune_list, reporting_year = year).values("reporting_month").annotate(number=Sum('total_income'))
+                expenditure = MonthlyExpenditure.objects.filter(commune__in = commune_list, reporting_year = year).values("reporting_month").annotate(number=Sum('expenditure_amount'))
+            if(level == "national"):
+                commune_list = Commune.objects.all()[0]
+                incomes = MonthlyIncome.objects.filter(commune__in = commune_list, reporting_year = year).values("reporting_month").annotate(number=Sum('total_income'))
+                expenditure = MonthlyExpenditure.objects.filter(commune__in = commune_list, reporting_year = year).values("reporting_month").annotate(number=Sum('expenditure_amount'))
+
+            months_mames = getattr(settings, 'MONTHS_NAMES', '')
+
+            inc = []
+            for i in incomes:
+                one_item = {}
+                one_item["month_number"] = i["reporting_month"]
+                one_item["y"] = i["number"]
+                one_item["month_name"] = months_mames[str(i["reporting_month"])]
+                inc.append(one_item)
+
+            exp = []
+            for i in expenditure:
+                one_item = {}
+                one_item["month_number"] = i["reporting_month"]
+                one_item["y"] = i["number"]
+                one_item["month_name"] = months_mames[str(i["reporting_month"])]
+                exp.append(one_item)
+
+            inc = sorted(inc, key=itemgetter('month_number'))
+            exp = sorted(exp, key=itemgetter('month_number'))
+
+            current_month = datetime.datetime.now().month
+
+            incomes_values_list = []
+            if len(inc):
+                all_income = inc[0]["y"]
+                for i in range(1,current_month+1):
+                    ob = 0
+                    found = False
+                    found_value = 0
+                    while not found and ob < len(inc):
+                        if(inc[ob]["month_number"]) == i:
+                            found = True
+                            found_value = inc[ob]["y"]
+                        else:
+                            ob = ob + 1
+                    all_income = all_income + found_value
+                    incomes_values_list.append(all_income)
+            incomes = {}
+            incomes["name"] = "Cumulative Income"
+            incomes["data"] = incomes_values_list
+
+            expenditure_values_list = []
+            if len(exp):
+                all_expenditure = exp[0]["y"]
+                for i in range(1,current_month+1):
+                    ob = 0
+                    found = False
+                    found_value = 0
+                    while not found and ob < len(exp):
+                        if(exp[ob]["month_number"]) == i:
+                            found = True
+                            found_value = exp[ob]["y"]
+                        else:
+                            ob = ob + 1
+                    all_expenditure = all_expenditure + found_value
+                    expenditure_values_list.append(all_expenditure)
+            expenditures = {}
+            expenditures["name"] = "Cumulative Expenditure"
+            expenditures["data"] = expenditure_values_list
+
+
+    all_data = json.dumps({'incomes': incomes, 'expenditures': expenditures,})
+    #all_data = json.dumps({'incomes': inc, 'expenditure': exp,})
+
+    return HttpResponse(all_data, content_type="application/json")
+
 
 
 def get_number_of_water_points(request):
@@ -280,13 +399,17 @@ def get_number_of_water_points(request):
                 commune_list = Commune.objects.filter(code = code)
                 if (commune_list):
                     colline_list = Colline.objects.filter(commune__in = commune_list)
-                    location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__name").annotate(number=Count('colline__commune__name'))
-            
+                    #location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__commune__name").annotate(number=Count('colline__commune__name'))
+                    location_number_of_wp = WaterSourceEndPoint.objects.filter(colline__in = colline_list).values("colline__name").annotate(number=Count('colline__name'))
+
+
                     for wpl in location_number_of_wp:
                         one_item = {}
-                        one_item["name"] = wpl["colline__commune__name"]
+                        #one_item["name"] = wpl["colline__commune__name"]
+                        one_item["name"] = wpl["colline__name"]
                         one_item["y"] = wpl["number"]
-                        one_item["name: 'Mi"] = wpl["colline__commune__name"]
+                        #one_item["name: 'Mi"] = wpl["colline__commune__name"]
+                        one_item["name: 'Mi"] = wpl["colline__name"]
                         barChart_location_number_of_wp.append(one_item)
             elif (level == "province"):
                 province_list = Province.objects.filter(code = code)

@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^getwanteddata', views.getwanteddata, name='getwanteddata'),
     url(r'^getnumberofwaterpoints', views.get_number_of_water_points, name='getnumberofwaterpoints'),
     url(r'^getexpenditures', views.get_expenditures_info, name='getexpenditures'),
+    url(r'^get_exp_vs_in', views.exp_vs_in, name='get_exp_vs_in'),
 ]

@@ -221,14 +221,25 @@ class ActionsForWaterPointProblem(models.Model):
     def __unicode__(self):
         return "{0} - {1}".format(self.action_code, self.action_description)
 
+class WaterPointProblemResolver(models.Model):
+    ''' In this model will be stored water point problems resolvers.
+    Till now, resolvers are local level and commune level.
+    '''
+    resolver_level_code = models.CharField(max_length=10)
+    resolver_level_name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return "{0} - {1}".format(self.resolver_level_code, self.resolver_level_name)
 
 class WaterPointProblem(models.Model):
     ''' In this model will be stored reported water point problems '''
     water_point = models.ForeignKey(WaterSourceEndPoint)
     problem = models.ForeignKey(WaterPointProblemTypes)
     action_taken = models.ForeignKey(ActionsForWaterPointProblem)
+    resolved_at = models.ForeignKey(WaterPointProblemResolver, null=True)
     days = models.IntegerField()
     problem_solved = models.BooleanField(default=False)
+    resolve_date = models.DateField(null=True, blank=True)
     case_of_diarrhea = models.BooleanField(default=False)
     report_date = models.DateTimeField(auto_now_add=True)
     wpp_code = models.IntegerField(default=0)
