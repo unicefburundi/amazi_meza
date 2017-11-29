@@ -5,53 +5,67 @@
 
 {% block container %}
 
-<div>
+<div style="background-color: #cce5ff;">
 	<div class="row">
-		<div class="col-md-12">
-			<img class="noborder size-full aligncenter" src="{% static 'images/source-eau-1.jpg' %}" scale="0">
+		<div class="col-sm-12" align="center">
+			<img class="img-responsive" src="{% static 'images/www.jpg' %}" scale="0">
 		</div>
 	</div>
 
 	<hr>
 
 	<div class="row">
-		<div class="col-md-6 sub-page-content">
+		<div class="col-sm-6 sub-page-content">
+
 			<div class="row">
-				<div class="col-md-12">
-					<h3>{% trans "A propos de Amazi Meza" %}</h3>
+				<div class="col-sm-12 sub-page-content">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<p>
+								L’accès facile à l’eau potable est un facteur clé de santé publique sur lequel le gouvernement du Burundi et ses partenaires portent un grand intérêt afin de réduire les maladies, le taux de mortalité, la pauvreté et améliorer le développement socio- économique.
+C’est pour cette raison que le Ministère de l’Energie et Mines, à travers son agence nationale de régulation (AHAMR:  Agence Burundaise de l’Hydraulique et de l’Assainissement en Milieu Rural) a mis en place un partenariat avec UNICEF pour donner de meilleur services et l’accès à l’eau potable dans les communautés rurales. Cette plateforme que vous visitez a été développé pour accompagner le grand projet AMAZI MEZA!
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-md-12 sub-page-content">
-					{% trans "A propos de Amazi Meza" %}
-				</div>
-			</div>
+
 		</div>
-		<div class="col-md-6 sub-page-content verticallineseparator">
+
+
+		<div class="col-sm-6 sub-page-content" align="center">
+			<img class="img-responsive" src="{% static 'images/22.jpg' %}" scale="0">
+		</div>
+	</div>
+
+	<hr>
+
+	<div class="row">
+		<div class="col-sm-6 sub-page-content">
 			<img class="noborder size-full center-block" src="{% static 'images/puiser-eau.jpg' %}" scale="0">
 		</div>
-	</div>
-
-	<hr>
-
-	<div class="row">
-		<div class="col-md-6 sub-page-content">
-			<img class="noborder size-full center-block" src="{% static 'images/hands-washing.jpg' %}" scale="0">
-		</div>
-		<div class="col-md-6 sub-page-content verticallineseparator">
+		<div class="col-sm-6 sub-page-content">
 			<div class="row">
-				<div class="col-md-12">
-					<h3>{% trans "A propos de Amazi Meza" %}</h3>
+				<div class="col-sm-12">
+					<!--<h3>{% trans "A propos de Amazi Meza" %}</h3>-->
 				</div>
 			</div>
+
 			<div class="row">
-				<div class="col-md-12 sub-page-content">
-					{% trans "A propos de Amazi Meza" %}
+				<div class="col-sm-12 sub-page-content">
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<p>
+								AMAZI MEZA vise à collecter des données en temps réel sur le fonctionnement et la gestion des points d’eau pour améliorer l’accès à l’eau potable dans les communautés rurales. Le système est basé sur une application mobile qui permet de rapporter sur des éléments clés comme les problèmes des points d’eau, leurs localisations et les finances. Grace aux rapports envoyés, AMAZI MEZA apporte une valeur ajoutée en augmentant la fréquence de collecte des données et en diminuant le temps de rapportage/résolution des problèmes des points d’eau.
+Toutes les informations sont collectées soit au niveau local, soit au niveau communal, permettant ainsi une analyse plus approfondie par les décideurs et, après, des messages de rétroaction ou des actions correctives.
+							</p>
+						</div>
+					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
-
 </div>
 
 {% endblock %}
