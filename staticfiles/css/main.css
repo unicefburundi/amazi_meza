@@ -288,7 +288,7 @@ aside {
 	margin: 0 auto;
 	overflow: hidden;
 	padding: 0 0 0;
-    height: 300px;
+    height: 100px;
 }
 
 #footer-widgets .wrap {
@@ -362,7 +362,7 @@ aside {
 .footer-widgets-2 {
 	float: left;
     color: #737374;
-    margin-top: 40px;
+    margin-top: 5px;
     font-weight: bold;
 }
 
