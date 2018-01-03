@@ -545,12 +545,12 @@ def record_local_reporter(args):
         args['number_of_vulnerable_households'] = int(args['number_to_check'])
 
 
-        #The value at the position 9 should be yes or no
-        if(args['text'].split('#')[9].upper() != "YES" and  args['text'].split('#')[4].upper() != "NO"):
+        #The value at the position 9 should be OUI or NON
+        if(args['text'].split('#')[9].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'YES' ou 'NO'"
+            args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'OUI' ou 'NON'"
             return
-        if(args['text'].split('#')[9].upper() != "YES"):
+        if(args['text'].split('#')[9].upper() != "OUI"):
             args['wp_works'] = True
         else:
             args['wp_works']  = False
@@ -612,23 +612,23 @@ def record_problem_report(args):
     if not args['valide']:
         return
 
-    #The value at the position 4 should be yes or no
-    if(args['text'].split('#')[4].upper() != "YES" and  args['text'].split('#')[4].upper() != "NO"):
+    #The value at the position 4 should be OUI or NON
+    if(args['text'].split('#')[4].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'YES' ou 'NO'"
+        args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'OUI' ou 'NON'"
         return
-    if(args['text'].split('#')[4].upper() != "YES"):
+    if(args['text'].split('#')[4].upper() != "OUI"):
         args['problem_solved'] = False
     else:
         args['problem_solved']  = True
 
 
-    #The value at the position 4 should be yes or no
-    if(args['text'].split('#')[5].upper() != "YES" and  args['text'].split('#')[5].upper() != "NO"):
+    #The value at the position 5 should be OUI or NON
+    if(args['text'].split('#')[5].upper() != "OUI" and  args['text'].split('#')[5].upper() != "NON"):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'YES' ou 'NO'"
+        args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'OUI' ou 'NON'"
         return
-    if(args['text'].split('#')[5].upper() != "YES"):
+    if(args['text'].split('#')[5].upper() != "OUI"):
         args['is_there_diarrhea_case'] = False
     else:
         args['is_there_diarrhea_case'] = True
