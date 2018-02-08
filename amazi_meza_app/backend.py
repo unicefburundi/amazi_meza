@@ -22,8 +22,7 @@ def byteify(input):
 
 def eliminate_unnecessary_spaces(arg):
     '''This function eliminate unnecessary spaces in an the incoming message'''
-    the_incoming_message = args['results']['rapport1']['input']
-    print("The text before sub             " + the_incoming_message)
+    the_incoming_message = arg['results']['rapport1']['input']
     the_new_message = the_incoming_message.strip()
     arg['text'] = the_new_message
 
