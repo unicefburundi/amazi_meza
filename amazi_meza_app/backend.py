@@ -40,8 +40,8 @@ def eliminate_unnecessary_spaces(args):
 
 def identify_message(arg):
     ''' This function identifies which kind of message this message is. '''
-    incoming_prefix = arg['text'].split('# ')[0].upper()
-    if arg['text'].split('# ')[0].upper() in getattr(settings,'KNOWN_PREFIXES',''):
+    incoming_prefix = arg['text'].split('#')[0].upper()
+    if arg['text'].split('#')[0].upper() in getattr(settings,'KNOWN_PREFIXES',''):
         #  Prefixes and related meanings are stored in the dictionary "KNOWN_PREFIXES"
         arg['message_type'] = getattr(settings,'KNOWN_PREFIXES','')[incoming_prefix]
         arg['info_to_contact'] = "Le SMS est reconnu"
@@ -166,5 +166,5 @@ def handel_rapidpro_request(request):
 
 
     response['info_to_contact'] = incoming_data['info_to_contact']
-
+    print response['info_to_contact']
     return response

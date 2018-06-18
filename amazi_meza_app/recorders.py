@@ -7,7 +7,7 @@ import re
 
 def check_colline(args):
     ''' This function checks if the colline name sent by the reporter exists '''
-    the_colline_name = args['text'].split('# ')[1]
+    the_colline_name = args['text'].split('#')[1]
     concerned_facility = CDS.objects.filter(code = the_facility_code)
     if (len(concerned_facility) > 0):
         args['valide'] = True
@@ -24,13 +24,13 @@ def check_number_of_values(args):
     expected_number_of_values_int = int(expected_number_of_values_string)
 
 
-    if len(args['text'].split('# ')) < expected_number_of_values_int:
+    if len(args['text'].split('#')) < expected_number_of_values_int:
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
-    if len(args['text'].split('# ')) > expected_number_of_values_int:
+    if len(args['text'].split('#')) > expected_number_of_values_int:
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
-    if len(args['text'].split('# ')) == expected_number_of_values_int:
+    if len(args['text'].split('#')) == expected_number_of_values_int:
         args['valide'] = True
         args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
 
@@ -153,7 +153,7 @@ def check_commune_colline_names_valide(args):
 
 def check_network_registered(args):
     ''' This function checks if a water network is not already registered in a given commune '''
-    args["water_network_name"] = args['text'].split('# ')[1].strip().upper()
+    args["water_network_name"] = args['text'].split('#')[1].strip().upper()
     network_set = WaterNetWork.objects.filter(commune = args['the_commune'], water_network_name = args["water_network_name"])
     if len(network_set) > 0:
         args["valide"] = True
@@ -322,7 +322,7 @@ def check_number_is_int(args):
     ''' This function checks if the number at the indicated position is an int '''
 
     indicated_position = args['number_position']
-    number_to_check = args['text'].split('# ')[indicated_position]
+    number_to_check = args['text'].split('#')[indicated_position]
 
     expression = r'^[0-9]+$'
 
@@ -372,7 +372,7 @@ def check_month_between_1_12(args):
 
 def choose_water_network_code(args):
     ''' This function choose a code to give to a water network '''
-    water_network_name = args['text'].split('# ')[1]
+    water_network_name = args['text'].split('#')[1]
     water_network_code = len(water_network_name)
 
     code_valide = False
@@ -388,7 +388,7 @@ def choose_water_network_code(args):
 
 def record_commune_level_reporter(args):
     '''This function is used to record a commune level reporter'''
-    if(args['text'].split('# ')[0].upper() == 'RLR'):
+    if(args['text'].split('#')[0].upper() == 'RLR'):
         args['mot_cle'] = 'RLR'
         #  Because RLR is used to do the self registration and not the update, if the phone user sends a message starting with RLR and             
         #  he/she is already a reporter, we don't allow him/her to continue
@@ -406,16 +406,16 @@ def record_commune_level_reporter(args):
             return
 
         #  Let's check if the code of the commune is valid
-        args["commune_code"] = args['text'].split('# ')[2]
+        args["commune_code"] = args['text'].split('#')[2]
         check_commune_exists(args)
         if not args['valide']:
             return
 
         #  Let's save the commune level reporter
-        CommuneLevelReporters.objects.create(commune = args["concerned_commune"], reporter_phone_number = args['phone'], reporter_name = args['text'].split('# ')[1], date_registered = datetime.datetime.now().date())
+        CommuneLevelReporters.objects.create(commune = args["concerned_commune"], reporter_phone_number = args['phone'], reporter_name = args['text'].split('#')[1], date_registered = datetime.datetime.now().date())
         args["valide"] = True
         args["info_to_contact"] = "Tu es bien enregistre dans la liste des rapporteurs du niveau communal"
-    if(args['text'].split('# ')[0].upper() == 'RLRM'):
+    if(args['text'].split('#')[0].upper() == 'RLRM'):
         args['mot_cle'] = 'REGM'
 
         check_if_is_commune_level_reporter(args)
@@ -432,7 +432,7 @@ def record_commune_level_reporter(args):
             return
 
         #  Let's check if the code of CDS is valid
-        args["commune_code"] = args['text'].split('# ')[2]
+        args["commune_code"] = args['text'].split('#')[2]
         check_commune_exists(args)
         if not args['valide']:
             return
@@ -441,7 +441,7 @@ def record_commune_level_reporter(args):
         reporter_set = CommuneLevelReporters.objects.filter(reporter_phone_number = args["phone"])
         the_concerned_reporter = reporter_set[0]
         the_concerned_reporter.commune = args["concerned_commune"]
-        the_concerned_reporter.reporter_name = args['text'].split('# ')[1]
+        the_concerned_reporter.reporter_name = args['text'].split('#')[1]
         the_concerned_reporter.save()
         args["valide"] = True
         args["info_to_contact"] = "Mise a jour reussie"
@@ -484,7 +484,7 @@ def record_water_network(args):
 def record_local_reporter(args):
     '''This function is used to record a colline level reporter'''
 
-    if(args['text'].split('# ')[0].upper() == 'RL'):
+    if(args['text'].split('#')[0].upper() == 'RL'):
         # This contact is doing registration not an update
         args['mot_cle'] = "RL"
 
@@ -502,34 +502,34 @@ def record_local_reporter(args):
             return
 
         #  Let's check if names of commune and colline are valid
-        args["commune_name"] = args['text'].split('# ')[1]
-        args["colline_name"] = args['text'].split('# ')[2]
+        args["commune_name"] = args['text'].split('#')[1]
+        args["colline_name"] = args['text'].split('#')[2]
         check_commune_colline_names_valide(args)
         if not args['valide']:
             return
 
         # Let's check if the code of water network is valid
-        args["water_network_code"] = args['text'].split('# ')[3]
+        args["water_network_code"] = args['text'].split('#')[3]
         check_water_network_code_valid(args)
         if not args['valide']:
             return
 
-        args["reporter_name"] =  args['text'].split('# ')[3].capitalize()
+        args["reporter_name"] =  args['text'].split('#')[3].capitalize()
 
         # Let's check if the water point name given is unique in that colline
-        args["water_point_name"] = args['text'].split('# ')[5].upper()
+        args["water_point_name"] = args['text'].split('#')[5].upper()
         check_water_point_name_unique_in_colline(args)
         if args['valide']:
             return
 
         # Let's check if the indicated water point type is valid
-        args["water_point_type"] = args['text'].split('# ')[6]
+        args["water_point_type"] = args['text'].split('#')[6]
         check_water_point_type_exists(args)
         if not args['valide']:
             return
 
         # Let's check if the value sent for number of households is valid
-        args['number_to_check'] = args['text'].split('# ')[7]
+        args['number_to_check'] = args['text'].split('#')[7]
         args['value_meaning'] = "Nombre de menages"
         check_is_number(args)
         if not args['valide']:
@@ -537,7 +537,7 @@ def record_local_reporter(args):
         args['number_of_households'] = int(args['number_to_check'])
 
         # Let's check if the value sent for number of vulnerable households is valid
-        args['number_to_check'] = args['text'].split('# ')[8]
+        args['number_to_check'] = args['text'].split('#')[8]
         args['value_meaning'] = "Nombre de menages vulnerables"
         check_is_number(args)
         if not args['valide']:
@@ -546,11 +546,11 @@ def record_local_reporter(args):
 
 
         # The value at the position 9 should be OUI or NON
-        if(args['text'].split('# ')[9].upper() != "OUI" and  args['text'].split('# ')[4].upper() != "NON"):
+        if(args['text'].split('#')[9].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
             args['valide'] = False
             args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'OUI' ou 'NON'"
             return
-        if(args['text'].split('# ')[9].upper() != "OUI"):
+        if(args['text'].split('#')[9].upper() != "OUI"):
             args['wp_works'] = True
         else:
             args['wp_works']  = False
@@ -562,7 +562,7 @@ def record_local_reporter(args):
 
         args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
 
-    if(args['text'].split('# ')[0].upper() == 'RLM'):
+    if(args['text'].split('#')[0].upper() == 'RLM'):
         # This contact is doing an update
         args['mot_cle'] = "RLM"
 
@@ -594,41 +594,41 @@ def record_problem_report(args):
         return
 
     # Let's check if the problem category sent is valid
-    args["problem_category"] = args['text'].split('# ')[1]
+    args["problem_category"] = args['text'].split('#')[1]
     check_w_p_problem_category_valid(args)
     if not args['valide']:
         return
 
     # Let's check if the number of days sent is valid
-    args["number_of_days"] = args['text'].split('# ')[2]
+    args["number_of_days"] = args['text'].split('#')[2]
     check_number_of_days_valid(args)
     if not args['valide']:
         return
     args["number_of_days"] = int(args["number_of_days"])
 
     # Let's check if the action taken sent is valid
-    args["action_taken"] = args['text'].split('# ')[3]
+    args["action_taken"] = args['text'].split('#')[3]
     check_action_taken_valid(args)
     if not args['valide']:
         return
 
     # The value at the position 4 should be OUI or NON
-    if(args['text'].split('# ')[4].upper() != "OUI" and  args['text'].split('# ')[4].upper() != "NON"):
+    if(args['text'].split('#')[4].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'OUI' ou 'NON'"
         return
-    if(args['text'].split('# ')[4].upper() != "OUI"):
+    if(args['text'].split('#')[4].upper() != "OUI"):
         args['problem_solved'] = False
     else:
         args['problem_solved']  = True
 
 
     # The value at the position 5 should be OUI or NON
-    if(args['text'].split('# ')[5].upper() != "OUI" and  args['text'].split('# ')[5].upper() != "NON"):
+    if(args['text'].split('#')[5].upper() != "OUI" and  args['text'].split('#')[5].upper() != "NON"):
         args['valide'] = False
         args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'OUI' ou 'NON'"
         return
-    if(args['text'].split('# ')[5].upper() != "OUI"):
+    if(args['text'].split('#')[5].upper() != "OUI"):
         args['is_there_diarrhea_case'] = False
     else:
         args['is_there_diarrhea_case'] = True
@@ -667,7 +667,7 @@ def record_problem_resolution_report(args):
         return
 
     # Let's check if the value sent for water point problem code is valid
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Code de la panne"
     check_is_number(args)
     if not args['valide']:
@@ -676,7 +676,7 @@ def record_problem_resolution_report(args):
 
 
     # Let's check if the value sent for resolver level is valid
-    args["resolver"] = args['text'].split('# ')[2]
+    args["resolver"] = args['text'].split('#')[2]
     check_resolver_is_valid(args)
     if not args['valide']:
         return
@@ -716,7 +716,7 @@ def record_beneficaries_first_month(args):
         return
 
     # Let's check if value sent for number of water point commities is valid
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Nombre des commites des points d eau"
     check_is_number(args)
     if not args['valide']:
@@ -724,7 +724,7 @@ def record_beneficaries_first_month(args):
     args['number_of_water_point_committees'] = int(args['number_to_check'])
 
     # Let's check if value sent for number of households is valid
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Nombre de menages"
     check_is_number(args)
     if not args['valide']:
@@ -732,7 +732,7 @@ def record_beneficaries_first_month(args):
     args['number_of_households'] = int(args['number_to_check'])
 
     # Let's check if value sent for number of vulnerable households is valid
-    args['number_to_check'] = args['text'].split('# ')[3]
+    args['number_to_check'] = args['text'].split('#')[3]
     args['value_meaning'] = "Nombre de menages vulnerables"
     check_is_number(args)
     if not args['valide']:
@@ -741,7 +741,7 @@ def record_beneficaries_first_month(args):
 
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[4]
+    args['number_to_check'] = args['text'].split('#')[4]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -750,7 +750,7 @@ def record_beneficaries_first_month(args):
 
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
-    args['value_to_check'] = args['text'].split('# ')[4]
+    args['value_to_check'] = args['text'].split('#')[4]
     args['value_meaning'] = "Annee concernee par le rapport"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
@@ -758,7 +758,7 @@ def record_beneficaries_first_month(args):
         return
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -766,7 +766,7 @@ def record_beneficaries_first_month(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[5]
+    args['value_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -806,7 +806,7 @@ def record_water_sources_points(args):
     if not args['valide']:
         return
 
-    number_of_wp_types = len(args['text'].split('# ')) - 3
+    number_of_wp_types = len(args['text'].split('#')) - 3
 
     for i in range(1,number_of_wp_types):
         args['number_position'] = i
@@ -818,7 +818,7 @@ def record_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -827,7 +827,7 @@ def record_water_sources_points(args):
 
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
-    args['value_to_check'] = args['text'].split('# ')[5]
+    args['value_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
@@ -835,7 +835,7 @@ def record_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[6]
+    args['number_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -843,7 +843,7 @@ def record_water_sources_points(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[6]
+    args['value_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -859,7 +859,7 @@ def record_water_sources_points(args):
 
     for i in range(1,number_of_wp_types+1):
         wpt_set = WaterPointType.objects.filter(priority = i)
-        number = args['text'].split('# ')[i]
+        number = args['text'].split('#')[i]
         if(len(wpt_set) > 0):
             wpt = wpt_set[0]
             NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, existing_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "EXISTING")
@@ -892,7 +892,7 @@ def record_additional_water_sources_points(args):
     if not args['valide']:
         return
 
-    number_of_wp_types = len(args['text'].split('# ')) - 3
+    number_of_wp_types = len(args['text'].split('#')) - 3
 
     for i in range(1,number_of_wp_types):
         args['number_position'] = i
@@ -904,7 +904,7 @@ def record_additional_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -913,7 +913,7 @@ def record_additional_water_sources_points(args):
 
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
-    args['value_to_check'] = args['text'].split('# ')[5]
+    args['value_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
@@ -921,7 +921,7 @@ def record_additional_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[6]
+    args['number_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -929,7 +929,7 @@ def record_additional_water_sources_points(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[6]
+    args['value_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -937,7 +937,7 @@ def record_additional_water_sources_points(args):
 
     for i in range(1, number_of_wp_types+1):
         wpt_set = WaterPointType.objects.filter(priority = i)
-        number = args['text'].split('# ')[i]
+        number = args['text'].split('#')[i]
         if(len(wpt_set) > 0):
             wpt = wpt_set[0]
             NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, additional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "ADDITIONAL")
@@ -969,7 +969,7 @@ def record_functional_water_sources_points(args):
     if not args['valide']:
         return
 
-    number_of_wp_types = len(args['text'].split('# ')) - 3
+    number_of_wp_types = len(args['text'].split('#')) - 3
 
     for i in range(1,number_of_wp_types):
         args['number_position'] = i
@@ -981,7 +981,7 @@ def record_functional_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -990,7 +990,7 @@ def record_functional_water_sources_points(args):
 
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
-    args['value_to_check'] = args['text'].split('# ')[5]
+    args['value_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
@@ -998,7 +998,7 @@ def record_functional_water_sources_points(args):
         return
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[6]
+    args['number_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -1006,7 +1006,7 @@ def record_functional_water_sources_points(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[6]
+    args['value_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -1014,7 +1014,7 @@ def record_functional_water_sources_points(args):
 
     for i in range(1,number_of_wp_types+1):
         wpt_set = WaterPointType.objects.filter(priority = i)
-        number = args['text'].split('# ')[i]
+        number = args['text'].split('#')[i]
         if(len(wpt_set) > 0):
             wpt = wpt_set[0]
             NumberOfWaterSourceEndPoint.objects.create(commune = args['the_commune'], water_point_type = wpt, functional_number = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'], report_type = "FUNCTIONAL")
@@ -1048,7 +1048,7 @@ def record_annual_budget(args):
         return
 
     # Let's check if value sent for budget amount is an int
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Budget annuel"
     check_is_number(args)
     if not args['valide']:
@@ -1056,7 +1056,7 @@ def record_annual_budget(args):
     args['annual_budget'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_year(args)
     if not args['valide']:
@@ -1104,7 +1104,7 @@ def record_expected_expenditure(args):
         return
 
     # Let's check if value sent for expected annual expenditure is an int
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Prevision des depenses annuelles"
     check_is_number(args)
     if not args['valide']:
@@ -1112,7 +1112,7 @@ def record_expected_expenditure(args):
     args['expected_annual_expenditure'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_year(args)
     if not args['valide']:
@@ -1160,7 +1160,7 @@ def record_income_money(args):
         return
 
     # Let's check if the value sent for amount collected is an int
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Montant collecte"
     check_is_number(args)
     if not args['valide']:
@@ -1168,7 +1168,7 @@ def record_income_money(args):
     args['amount_collected'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_year(args)
     if not args['valide']:
@@ -1176,7 +1176,7 @@ def record_income_money(args):
     args['reporting_year'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[3]
+    args['number_to_check'] = args['text'].split('#')[3]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -1184,7 +1184,7 @@ def record_income_money(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[3]
+    args['value_to_check'] = args['text'].split('#')[3]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -1221,7 +1221,7 @@ def record_expenditure(args):
         return
 
     # Let's check if the value sent for Amount spent on Services and Repairs is an int
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Montant depense pour les reparations"
     check_is_number(args)
     if not args['valide']:
@@ -1230,7 +1230,7 @@ def record_expenditure(args):
 
 
     # Let's check if the value sent for Amount spent on Equipment and logistics is an int
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Montant depense pour les Equipments"
     check_is_number(args)
     if not args['valide']:
@@ -1239,7 +1239,7 @@ def record_expenditure(args):
 
 
     # Let's check if the value sent for Amount spent on Salaries is an int
-    args['number_to_check'] = args['text'].split('# ')[3]
+    args['number_to_check'] = args['text'].split('#')[3]
     args['value_meaning'] = "Montant depense pour les salaires"
     check_is_number(args)
     if not args['valide']:
@@ -1248,7 +1248,7 @@ def record_expenditure(args):
 
 
     # Let's check if the Amount spent on Administrative costs is an int
-    args['number_to_check'] = args['text'].split('# ')[4]
+    args['number_to_check'] = args['text'].split('#')[4]
     args['value_meaning'] = "Montant depense pour l administration"
     check_is_number(args)
     if not args['valide']:
@@ -1256,7 +1256,7 @@ def record_expenditure(args):
     args['amount_spend_on_administrations'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_year(args)
     if not args['valide']:
@@ -1264,7 +1264,7 @@ def record_expenditure(args):
     args['reporting_year'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[6]
+    args['number_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -1272,7 +1272,7 @@ def record_expenditure(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[6]
+    args['value_to_check'] = args['text'].split('#')[6]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
@@ -1285,11 +1285,11 @@ def record_expenditure(args):
         args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des depenses pour cette periode"
         return
     else:
-        number_of_expensy_types = len(args['text'].split('# ')) - 3
+        number_of_expensy_types = len(args['text'].split('#')) - 3
 
         for i in range(1,number_of_expensy_types+1):
             expensy_type_set = ExpenditureCategory.objects.filter(priority = i)
-            number = int(args['text'].split('# ')[i])
+            number = int(args['text'].split('#')[i])
             if(len(expensy_type_set) > 0):
                 exp_t = expensy_type_set[0]
                 MonthlyExpenditure.objects.create(commune = args['the_commune'], expenditure = exp_t, expenditure_amount = number, reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
@@ -1322,7 +1322,7 @@ def record_network_problem(args):
         return
 
     # Let's check if the value sent for number of network problems is an int
-    args['number_to_check'] = args['text'].split('# ')[1]
+    args['number_to_check'] = args['text'].split('#')[1]
     args['value_meaning'] = "Nombre de pannes sur le reseau"
     check_is_number(args)
     if not args['valide']:
@@ -1330,7 +1330,7 @@ def record_network_problem(args):
     args['nb_de_pannes_sur_le_reseau'] = int(args['number_to_check'])
 
     # Let's check if the value sent for days the problem lasted is an int
-    args['number_to_check'] = args['text'].split('# ')[2]
+    args['number_to_check'] = args['text'].split('#')[2]
     args['value_meaning'] = "Nombre de jours que le reseau est en panne"
     check_is_number(args)
     if not args['valide']:
@@ -1338,13 +1338,13 @@ def record_network_problem(args):
     args['nb_de_jours_reseau_en_panne'] = int(args['number_to_check'])
 
     # Let's check if the network type sent is valid
-    args['network_problem_type_code'] = args['text'].split('# ')[3]
+    args['network_problem_type_code'] = args['text'].split('#')[3]
     check_water_network_problem_type(args)
     if not args['valide']:
         return
 
     # Let's check if value sent for reporting year is an int
-    args['number_to_check'] = args['text'].split('# ')[4]
+    args['number_to_check'] = args['text'].split('#')[4]
     args['value_meaning'] = "Annee concernee par le rapport"
     check_is_year(args)
     if not args['valide']:
@@ -1352,7 +1352,7 @@ def record_network_problem(args):
     args['reporting_year'] = int(args['number_to_check'])
 
     # Let's check if value sent for reporting month is an int
-    args['number_to_check'] = args['text'].split('# ')[5]
+    args['number_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_is_number(args)
     if not args['valide']:
@@ -1360,7 +1360,7 @@ def record_network_problem(args):
     args['reporting_month'] = int(args['number_to_check'])
 
     # Let's check if the value sent for reporting month is between 1 and 12
-    args['value_to_check'] = args['text'].split('# ')[5]
+    args['value_to_check'] = args['text'].split('#')[5]
     args['value_meaning'] = "Moi concerne par le rapport"
     check_month_between_1_12(args)
     if not args['valide']:
