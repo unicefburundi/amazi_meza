@@ -20,11 +20,22 @@ def byteify(input):
         return input
 
 
-def eliminate_unnecessary_spaces(arg):
-    '''This function eliminate unnecessary spaces in an the incoming message'''
-    the_incoming_message = arg['results']['rapport1']['input']
-    the_new_message = the_incoming_message.strip()
-    arg['text'] = the_new_message
+def eliminate_unnecessary_spaces(args):
+    #the_incoming_message = args['results']['rapport1']['input']
+    the_incoming_message = args['input']['text']
+    print("The text before sub             " + the_incoming_message)
+    # the_new_message = re.sub(' +',' ',the_incoming_message)
+
+    #  Messages from RapidPro comes with spaces replaced by '+'
+    #  Let's replace those '+' (one or more) by one space
+    the_new_message = re.sub('[+]+',' ',the_incoming_message)
+
+    #   Find any comma
+    the_new_message = urllib.unquote_plus(the_new_message)    
+
+    #  Let's eliminate spaces at the begining and the end of the message
+    the_new_message = the_new_message.strip()
+    args['text'] = the_new_message
 
 
 def identify_message(arg):
