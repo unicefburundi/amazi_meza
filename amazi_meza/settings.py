@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'amazi_meza_app',
     'public_administration_structure_app',
     'import_export',
+    'djgeojson',
+    'leaflet',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -86,6 +88,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+
+LEAFLET_CONFIG = {
+    # conf here
+    #'SPATIAL_EXTENT': (-3.0, 29.9, 17.5, 14.5),
+    'DEFAULT_CENTER': (-3.5, 29.9),
+    'DEFAULT_ZOOM': 9,
 }
 
 

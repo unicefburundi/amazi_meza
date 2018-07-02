@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from public_administration_structure_app.models import *
+from djgeojson.fields import PointField
 
 
 class LocalLevelReporter(models.Model):
@@ -207,10 +208,23 @@ class WaterSourceEndPoint(models.Model):
     number_of_households = models.IntegerField(default=0)
     number_of_vulnerable_households = models.IntegerField(default=0)
     water_point_functional = models.BooleanField(default=True)
+    geom = PointField(null=True)
 
     def __unicode__(self):
-        return "{0} - {1} - {2} - {3} - {4} - {5}".format(self.water_point_name, self.water_point_type, self.colline, self.network, self.reporter, self.date_registered)
+        return "{0} - {1} - {2} - {3} - {4} - {5} - {6}".format(self.water_point_name, self.water_point_type, self.colline, self.network, self.reporter, self.date_registered, self.geom)
 
+    @property
+    def popupContent(self):
+      return 'Nom : {}, Type : {}, Position : {}, Province : {}, Commune : {}, Colline : {}, Rapporteur : {}, Tel : {}'.format(
+          self.water_point_name,
+          self.water_point_type.name,
+          self.geom["coordinates"],
+          self.colline.commune.province.name,
+          self.colline.commune.name,
+          self.colline.name,
+          self.reporter.reporter_name,
+          self.reporter.reporter_phone_number
+          )
 
 class ActionsForWaterPointProblem(models.Model):
     ''' In this model will be stored possible actions for water point

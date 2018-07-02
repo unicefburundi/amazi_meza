@@ -1,6 +1,7 @@
 from django.contrib import admin
 from amazi_meza_app.models import *
 from import_export.admin import ImportExportModelAdmin
+from leaflet.admin import LeafletGeoAdmin
 
 
 @admin.register(LocalLevelReporter)
@@ -73,9 +74,8 @@ class WaterNetWorkAdmin(ImportExportModelAdmin):
     pass
 
 
-@admin.register(WaterSourceEndPoint)
-class WaterSourceEndPointAdmin(ImportExportModelAdmin):
-    pass
+
+admin.site.register(WaterSourceEndPoint, LeafletGeoAdmin)
 
 
 @admin.register(ActionsForWaterPointProblem)

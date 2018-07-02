@@ -1,6 +1,8 @@
 from django.conf.urls import include, url
 from . import views
 from amazi_meza_app.backend import handel_rapidpro_request
+#from djgeojson.views import TiledGeoJSONLayerView
+#from amazi_meza_app.models import WaterSourceEndPoint
 
 urlpatterns = [
     url(r'^$', views.landing, name='landing'),

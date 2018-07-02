@@ -36,6 +36,7 @@ def mapping(request):
     d = {}
     d["pagetitle"] = "Mapping"
     d["provinces"] = Province.objects.all()
+    d["all_water_points"] = WaterSourceEndPoint.objects.all()
     return render(request, 'mapping.html', d)
 
 def finance(request):

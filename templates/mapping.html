@@ -1,14 +1,25 @@
-{% extends "base.html" %}
+{% extends "base2.html" %}
+{% load geojson_tags %}
 {% load staticfiles %}
 {% load i18n %}
+{% load leaflet_tags %}
 
 
 {% block head %}
+
+	<style type="text/css">
+
+	.leaflet-container {
+        height: 700px;
+    }
+
+	</style>
 
 	<script language="JavaScript">
 
 
 		$(document).ready(function() {
+
 			$('.datepicker').datepicker({
 			    dateFormat: 'yy-mm-dd',
 			    startDate: '-3d'
@@ -213,7 +224,6 @@
 
 
 
-
 								//Add rows in the table
 								for (var i = 0; i < barChartLocationNumberOfWP.length; i++){
 									$('#tbl').find('tbody').append('<tr style="cursor:pointer;"></tr>');
@@ -311,6 +321,7 @@
 		        
 		        return false;
 		    }
+
 		</script>
 {% endblock %}
 
@@ -318,6 +329,16 @@
 
 
 {% block container %}
+			<p>
+			<div id="map1" style="margin: 0 auto">
+				
+				{% leaflet_map "map" callback="window.map_init_basic" %}
+
+			</div>
+			</p>
+
+			<br>
+
 			<div>
 				{% if msg %}
 					<div class="divmessage"><p>{{ msg }}</p></div>
@@ -326,6 +347,7 @@
 					<div class="diverror"><p>{{ err }}</p></div>
 				{% endif %}
 			</div>
+
 
 			<div class="form-inline" style="padding-left :5px; padding-right :5px;">
 				<div class="form-group">
@@ -353,5 +375,27 @@
 			<div id="div_tbl_loc_number_wp" class="form-inline" style="padding-left :5px; padding-right :5px;">
 			</div>
 
-			<div id="loc_number_of_wp_chart_container" style="margin: 0 auto"></div>
+			<div id="loc_number_of_wp_chart_container" style="margin: 0 auto">
+				
+			</div>
+
+
+
+			<script type="text/javascript">
+
+	var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
+
+				  function onEachFeature(feature, layer) {
+				    if (feature.properties && feature.properties.popupContent) {
+				      layer.bindPopup(feature.properties.popupContent);
+				    }
+				  }
+
+				  function map_init_basic(map, options) {
+				L.geoJson(collection, {onEachFeature: onEachFeature}).addTo(map);
+				  }
+			</script>
+
+			
+			
 {% endblock %}
