@@ -383,6 +383,10 @@
 
 			<script type="text/javascript">
 
+			console.log("111>>>");
+			console.log({{ all_water_points|geojsonfeature:"popupContent"|safe }});
+			console.log("111---");
+
 	var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
 
 				  function onEachFeature(feature, layer) {
