@@ -220,7 +220,7 @@
 								
 								var barChartLocationNumberOfWP = response;
 
-								console.log(barChartLocationNumberOfWP);
+								//console.log(barChartLocationNumberOfWP);
 
 
 
@@ -384,8 +384,9 @@
 			<script type="text/javascript">
 
 			console.log("111>>>");
-			console.log({{ all_water_points }});
-			//console.log({{ all_water_points|geojsonfeature:"popupContent"|safe }});
+			if({{ all_water_points|geojsonfeature:"popupContent"|safe }}){
+				console.log({{ all_water_points|geojsonfeature:"popupContent"|safe }});
+			}
 			console.log("111---");
 
 	/*var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
