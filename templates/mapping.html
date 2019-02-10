@@ -384,10 +384,11 @@
 			<script type="text/javascript">
 
 			console.log("111>>>");
-			console.log({{ all_water_points|geojsonfeature:"popupContent"|safe }});
+			console.log({{ all_water_points }});
+			//console.log({{ all_water_points|geojsonfeature:"popupContent"|safe }});
 			console.log("111---");
 
-	var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
+	/*var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
 
 				  function onEachFeature(feature, layer) {
 				    if (feature.properties && feature.properties.popupContent) {
@@ -397,7 +398,7 @@
 
 				  function map_init_basic(map, options) {
 				L.geoJson(collection, {onEachFeature: onEachFeature}).addTo(map);
-				  }
+				  }*/
 			</script>
 
 			
