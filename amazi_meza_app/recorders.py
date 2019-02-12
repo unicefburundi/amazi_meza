@@ -11,7 +11,8 @@ def check_colline(args):
     concerned_facility = CDS.objects.filter(code = the_facility_code)
     if (len(concerned_facility) > 0):
         args['valide'] = True
-        args['info_to_contact'] = "Le code CDS envoye est reconnu."
+        #args['info_to_contact'] = "Le code CDS envoye est reconnu."
+        args['info_to_contact'] = "Code CDS yarungitswe irazwi."
     else:
         args['valide'] = False
         #  args['info_to_contact'] = "Erreur. Le code envoye n est pas associe a un CDS. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
@@ -26,13 +27,16 @@ def check_number_of_values(args):
 
     if len(args['text'].split('#')) < expected_number_of_values_int:
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        #args['info_to_contact'] = "Erreur. Vous avez envoye peu de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args['info_to_contact'] = "Ikosa. Warungitse ubintu bidakwiye. Rungika mesaje ikwiye neza"
     if len(args['text'].split('#')) > expected_number_of_values_int:
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        #args['info_to_contact'] = "Erreur. Vous avez envoye beaucoup de valeurs. Pour corriger, veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args['info_to_contact'] = "Ikosa. Warungitse ibintu vyinshi. Rungika mesaje ikwiye neza"
     if len(args['text'].split('#')) == expected_number_of_values_int:
         args['valide'] = True
-        args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
+        #args['info_to_contact'] = "Le nombre de valeurs envoye est correct."
+        args['info_to_contact'] = "Mesaje yarungitswe irakwiye neza"
 
 
 def check_has_already_session(args):
@@ -42,7 +46,8 @@ def check_has_already_session(args):
         same_existing_local_temp = same_existing_local_temp[0]
         same_existing_local_temp.delete()
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+        #args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+        args['info_to_contact'] = "Ikosa. Wari wasabwe kurungika numero ya telefone yuwugukurikira. Subira utangure kwiyandikisha"
         return
 
     same_existing_commune_level_temp = CommuneLevelReporters.objects.filter(reporter_phone_number = args['phone'])
@@ -50,7 +55,8 @@ def check_has_already_session(args):
         same_existing_commune_level_temp = same_existing_commune_level_temp[0]
         same_existing_commune_level_temp.delete()
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+        #args['info_to_contact'] = "Erreur. Vous devriez envoyer le numero de telephone de votre superviseur seulement. Pour corriger, veuillez recommencer l enregistrement."
+        args['info_to_contact'] = "Ikosa. Wari wasabwe kurungika numero ya telefone yuwugukurikira. Subira utangure kwiyandikisha"
         return
 
     
@@ -79,12 +85,14 @@ def check_if_is_commune_level_reporter(args):
     if len(concerned_reporter) < 1:
         #  This person is not in the list of reporters
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe mu bashobora kurungika mesaje. Banza wiyandikishe mu bashobora kurungika mesaje"
         return
 
     # args['the_sender'] = concerned_reporter
     args['the_commune'] = args['the_sender'].commune
-    args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
+    #args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
+    args['info_to_contact'] = "Uranditswe mubashobora kurungika mesaje"
 
 
 def check_if_is_colline_level_reporter(args):
@@ -99,12 +107,14 @@ def check_if_is_colline_level_reporter(args):
     if len(concerned_reporter) < 1:
         #  This person is not in the list of reporters
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre pour pouvoir donner des rapports. Veuillez vous enregistrer en envoyant le message d enregistrement"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe mu bashobora kurungika mesaje. Banza wiyandikishe mu bashobora kurungika mesaje"
         return
 
     args['the_colline'] = args['the_sender'].colline
     args['the_commune'] = args['the_colline'].commune
-    args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
+    #args['info_to_contact'] = "Vous etes reconnu comme rapporteur"
+    args['info_to_contact'] = "Uranditswe mu bashobora kurungika mesaje"
 
 def identify_water_point(args):
     ''' This function identify a water point a given reporter reports for '''
@@ -114,10 +124,12 @@ def identify_water_point(args):
     if len(water_point_set) > 0:
         args['valide'] = True
         args['concerned_water_point'] = water_point_set[0]
-        args['info_to_contact'] = "Le point d eau concerne est reconnu"
+        #args['info_to_contact'] = "Le point d eau concerne est reconnu"
+        args['info_to_contact'] = "Iryo vomo rirazwi"
     else:
         args['valide'] = False
-        args['info_to_contact'] = "Le point d eau pour lequel vous rapportez n est pas reconnu"
+        #args['info_to_contact'] = "Le point d eau pour lequel vous rapportez n est pas reconnu"
+        args['info_to_contact'] = "Ivomo ujejwe gutangira mesaje ntirizwi"
 
 def check_commune_exists(args):
     ''' This function checks if the commune exists '''
@@ -126,14 +138,16 @@ def check_commune_exists(args):
         commune_code = int(commune_code)
     except:
         args['valide'] = False
-        args['info_to_contact'] = "Le code ne peut etre compose que par des chiffres."
+        #args['info_to_contact'] = "Le code ne peut etre compose que par des chiffres."
+        args['info_to_contact'] = "Ikosa. Inomero ya komine itegerezwa kuba igizwe n ibiharuro gusa"
     else:
         commune_set = Commune.objects.filter(code = commune_code)
         if len(commune_set) > 0:
             args["concerned_commune"] = commune_set[0]
             args["valide"] = True
         else:
-            args["info_to_contact"] = "Erreur. Il n y a pas de commune ayant ce code"
+            #args["info_to_contact"] = "Erreur. Il n y a pas de commune ayant ce code"
+            args["info_to_contact"] = "Ikosa. Nta komine ifise iyo nomero wanditse"
             args["valide"] = False
 
 def check_commune_colline_names_valide(args):
@@ -145,9 +159,11 @@ def check_commune_colline_names_valide(args):
     if len(colline_set) > 0:
         args["concerned_colline"] = colline_set[0]
         args["valide"] = True
-        args["info_to_contact"] = "Il y a la colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+        #args["info_to_contact"] = "Il y a la colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+        args["info_to_contact"] = "Hariho korine '"+colline_name+"' muri komine '"+commune_name+"'"
     else:
-        args["info_to_contact"] = "Erreur. Il n y a pas de colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+        #args["info_to_contact"] = "Erreur. Il n y a pas de colline '"+colline_name+"' enregistree dans la commune '"+commune_name+"'."
+        args["info_to_contact"] = "Ikosa. Nta korine '"+colline_name+"' ibaho muri komine '"+commune_name+"'."
         args["valide"] = False
 
 
@@ -158,10 +174,12 @@ def check_network_registered(args):
     if len(network_set) > 0:
         args["valide"] = True
         args["registered_water_nw"] = network_set[0]
-        args["info_to_contact"] = "Ce reseau d eau est deja enregistre"
+        #args["info_to_contact"] = "Ce reseau d eau est deja enregistre"
+        args["info_to_contact"] = "Uwo mugende w amazi uranditswe"
     else:
         args['valide'] = False
-        args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
+        #args["info_to_contact"] = "Ce reseau d eau n est pas enregistre"
+        args["info_to_contact"] = "Ikosa. Uwo mugende w amazi ntiwanditswe"
 
 def check_water_network_code_valid(args):
     ''' This function checks if the water network code sent exits in a given colline '''
@@ -172,10 +190,12 @@ def check_water_network_code_valid(args):
     if len(water_network_set) > 0:
         args["valide"] = True
         args["concerned_water_network"] = water_network_set[0]
-        args["info_to_contact"] = "Le reseau d eau indique est bien indentifie"
+        #args["info_to_contact"] = "Le reseau d eau indique est bien indentifie"
+        args["info_to_contact"] = "Uwo mugende w amazi uranditswe"
     else:
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. Il n y a pas de reseau '"+args["water_network_code"]+"' enregistre dans la commune '"+args["concerned_colline"].commune.name+"'"
+        #args["info_to_contact"] = "Erreur. Il n y a pas de reseau '"+args["water_network_code"]+"' enregistre dans la commune '"+args["concerned_colline"].commune.name+"'"
+        args["info_to_contact"] = "Ikosa. Nta mugende w amazi '"+args["water_network_code"]+"' wanditswe kuri komine '"+args["concerned_colline"].commune.name+"'"
 
 
 def check_water_point_name_unique_in_colline(args):
@@ -187,10 +207,11 @@ def check_water_point_name_unique_in_colline(args):
 
     if len(water_point_set) > 0:
         args["valide"] = True
-        args["info_to_contact"] = "Erreur. Le point d eau '"+water_point_name.upper()+"' est deja enregistre dans la colline '"+args["concerned_colline"].name.upper()+"'"
+        #args["info_to_contact"] = "Erreur. Le point d eau '"+water_point_name.upper()+"' est deja enregistre dans la colline '"+args["concerned_colline"].name.upper()+"'"
+        args["info_to_contact"] = "Ikosa. Ivomo '"+water_point_name.upper()+"' risanzwe ryanditswe kuri korine '"+args["concerned_colline"].name.upper()+"'"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Le point d eau nomme '"+water_point_name.upper()+"' n est pas encore enregistre dans la colline '"+args["concerned_colline"].name.upper()+"'"
+        args["info_to_contact"] = "Ivomo '"+water_point_name.upper()+"' ntiryanditswe kuri korine '"+args["concerned_colline"].name.upper()+"'"
 
 def check_water_point_type_exists(args):
     ''' This function checks if the water point type sent is valid '''
@@ -202,10 +223,12 @@ def check_water_point_type_exists(args):
     if len(water_point_type_set) > 0:
         args["valide"] = True
         args["concerned_water_point_type"] = water_point_type_set[0]
-        args["info_to_contact"] = "Le type du point d eau indique est reconnu"
+        #args["info_to_contact"] = "Le type du point d eau indique est reconnu"
+        args["info_to_contact"] = "Ubwoko bw ivomo wanditse buranzwi"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Le type du point d eau indique n est pas reconnu"
+        #args["info_to_contact"] = "Le type du point d eau indique n est pas reconnu"
+        args["info_to_contact"] = "Ubwoko bw ivomo wanditse ntitubumenye"
 
 def check_w_p_problem_category_valid(args):
     ''' This function checks if the water point problem category sent is valid '''
@@ -217,10 +240,12 @@ def check_w_p_problem_category_valid(args):
     if len(w_p_problem_type_set) > 0:
         args["valide"] = True
         args["concerned_w_p_pbm_type"] = w_p_problem_type_set[0]
-        args["info_to_contact"] = "Le type de probleme envoye est reconnu"
+        #args["info_to_contact"] = "Le type de probleme envoye est reconnu"
+        args["info_to_contact"] = "Ingorane wanditse ko ivomo ryagize irazwi"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Erreur. Le type de probleme envoye n est pas reconnu"
+        #args["info_to_contact"] = "Erreur. Le type de probleme envoye n est pas reconnu"
+        args["info_to_contact"] = "Ikosa. Ingorane wanditse ko ivomo ryagize ntituyimenye"
 
 def check_water_network_problem_type(args):
     ''' This function checks if the water network problem category sent is valid '''
@@ -232,10 +257,12 @@ def check_water_network_problem_type(args):
     if len(network_problem_type_set) > 0:
         args["valide"] = True
         args["concerned_w_network_pbm_type"] = network_problem_type_set[0]
-        args["info_to_contact"] = "Le type de probleme du reseau d eau envoye est reconnu"
+        #args["info_to_contact"] = "Le type de probleme du reseau d eau envoye est reconnu"
+        args["info_to_contact"] = "Ingorane wanditse ko umugende wamazi wagize irazwi"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Erreur. Le type de probleme du reseau d eau envoye n est pas reconnu"
+        #args["info_to_contact"] = "Erreur. Le type de probleme du reseau d eau envoye n est pas reconnu"
+        args["info_to_contact"] = "Ikosa. Ingorane wanditse ko umugende w amazi wagize ntituyimenye"
 
 
 
@@ -249,10 +276,12 @@ def check_action_taken_valid(args):
     if len(action_taken_set) > 0:
         args["valide"] = True
         args["concerned_action_taken"] = action_taken_set[0]
-        args["info_to_contact"] = "Votre action face au probleme est reconnu"
+        #args["info_to_contact"] = "Votre action face au probleme est reconnu"
+        args["info_to_contact"] = "Ico wanditse ko cakozwe kirazwi"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Erreur. Votre action face a ce probleme de point d eau n est pas reconnu"
+        #args["info_to_contact"] = "Erreur. Votre action face a ce probleme de point d eau n est pas reconnu"
+        args["info_to_contact"] = "Ikosa. Ico wanditse ko cakozwe ntitugitahuye"
 
 
 
@@ -266,10 +295,12 @@ def check_resolver_is_valid(args):
     if len(resolver_level_set) > 0:
         args["valide"] = True
         args["resolver_level"] = resolver_level_set[0]
-        args["info_to_contact"] = "Le niveau qui a resolu le probleme est reconnu"
+        #args["info_to_contact"] = "Le niveau qui a resolu le probleme est reconnu"
+        args["info_to_contact"] = "Abo wanditse ko batoye umuti wico kibazo twabamenye"
     else:
         args["valide"] = False
-        args["info_to_contact"] = "Erreur. Le niveau qui a resolu le probleme n est pas reconnu"
+        #args["info_to_contact"] = "Erreur. Le niveau qui a resolu le probleme n est pas reconnu"
+        args["info_to_contact"] = "Ikosa. Abo wanditse ko batoye umuti wico kibazo ntitwabamenye"
 
 
 
@@ -283,10 +314,12 @@ def check_number_of_days_valid(args):
 
     if re.search(expression, number_of_days) is None:
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. Le nombre de jours envoye n est pas valide"
+        #args["info_to_contact"] = "Erreur. Le nombre de jours envoye n est pas valide"
+        args["info_to_contact"] = "Ikosa. Igitigiri c iminsi wanditse ntikibaho"
     else:
         args['valide'] = True
-        args["info_to_contact"] = "Le nombre de jours envoye est valide"
+        #args["info_to_contact"] = "Le nombre de jours envoye est valide"
+        args["info_to_contact"] = "Igitigiri c iminsi wanditse kirabaho"
 
 def check_is_number(args):
     ''' This function checks if a given number is a valid number '''
@@ -297,10 +330,12 @@ def check_is_number(args):
 
     if re.search(expression, number_to_check) is None:
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+        #args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+        args["info_to_contact"] = "Ikosa. Ico wanditse ku vyerekeye '"+args['value_meaning']+"' ntikibaho"
     else:
         args['valide'] = True
-        args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+        #args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+        args["info_to_contact"] = "Ico wanditse ku vyerekeye '"+args['value_meaning']+"' kirabaho"
 
 
 def check_is_year(args):
@@ -312,10 +347,12 @@ def check_is_year(args):
 
     if re.search(expression, number_to_check) is None:
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+        #args["info_to_contact"] = "Erreur. La valeur envoyee pour '"+args['value_meaning']+"' n est pas valide"
+        args["info_to_contact"] = "Ikosa. Ico wanditse ku vyerekeye '"+args['value_meaning']+"' sico"
     else:
         args['valide'] = True
-        args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+        #args["info_to_contact"] = "La valeur envoyee pour '"+args['value_meaning']+"' est valide"
+        args["info_to_contact"] = "Ico wanditse ku vyerekeye '"+args['value_meaning']+"' nico"
 
 
 def check_number_is_int(args):
@@ -328,10 +365,12 @@ def check_number_is_int(args):
 
     if re.search(expression, number_to_check) is None:
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. La valeur en position '"+str(indicated_position)+"' n est pas valide"
+        #args["info_to_contact"] = "Erreur. La valeur en position '"+str(indicated_position)+"' n est pas valide"
+        args["info_to_contact"] = "Ikosa. Ico wanditse mu kibanza ca '"+str(indicated_position)+"' sico"
     else:
         args['valide'] = True
-        args["info_to_contact"] = "La valeur en position '"+str(indicated_position)+"' est valide"
+        #args["info_to_contact"] = "La valeur en position '"+str(indicated_position)+"' est valide"
+        args["info_to_contact"] = "Ico wanditse mu kibanza ca '"+str(indicated_position)+"' nico"
 
 
 
@@ -344,17 +383,20 @@ def check_is_not_future_year(args):
 
     if(value_to_check > current_year):
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre une annee futur"
+        #args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre une annee future"
+        args["info_to_contact"] = "Ikosa. '"+args['value_meaning']+"' ntushobora kuba umwaka wo muri kazoza"
         return
     if(args['lower_limit']):
         if(value_to_check < args['lower_limit']):
             args['valide'] = False
-            args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre inferieure a '"+str(args['lower_limit'])+"'"
+            #args["info_to_contact"] = "Erreur. '"+args['value_meaning']+"' ne peut pas etre inferieure a '"+str(args['lower_limit'])+"'"
+            args["info_to_contact"] = "Ikosa. '"+args['value_meaning']+"' ntigishobora gusumbwa na '"+str(args['lower_limit'])+"'"
             return
 
 
     args['valide'] = True
-    args["info_to_contact"] = "'"+args['value_meaning']+"' est valide"
+    #args["info_to_contact"] = "'"+args['value_meaning']+"' est valide"
+    args["info_to_contact"] = "'"+args['value_meaning']+"' vyanditse neza"
 
 
 def check_month_between_1_12(args):
@@ -364,10 +406,12 @@ def check_month_between_1_12(args):
 
     if((value_to_check < 1) or (value_to_check > 12)):
         args['valide'] = False
-        args["info_to_contact"] = "Erreur. La valeur de '"+args['value_meaning']+"' doit etre entre 1 et 12"
+        #args["info_to_contact"] = "Erreur. La valeur de '"+args['value_meaning']+"' doit etre entre 1 et 12"
+        args["info_to_contact"] = "Ikosa. Igiharuro '"+args['value_meaning']+"' gitegerezwa kuba kiri hagati ya 1 na 12"
     else:
         args['valide'] = True
-        args["info_to_contact"] = "La valeur de '"+args['value_meaning']+"' est entre 1 et 12"
+        #args["info_to_contact"] = "La valeur de '"+args['value_meaning']+"' est entre 1 et 12"
+        args["info_to_contact"] = "Igiharuro '"+args['value_meaning']+"' kiri hagati ya 1 na 12"
 
 
 def choose_water_network_code(args):
@@ -396,7 +440,8 @@ def record_commune_level_reporter(args):
         if(args['valide'] is True):
             #  This contact is already a commune level reporter and can't do the registration the second time
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message commencant par le mot cle 'RLRM'"
+            #args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message commencant par le mot cle 'RLRM'"
+            args['info_to_contact'] = "Ikosa. Warahejeje kwiyandikisha. ushaka guhindura ingene wiyandikishije, rungika mesaje itangurwa n akajambo 'RLRM'"
             return
     
         #  Let's check if the message sent is composed by an expected number of values
@@ -414,7 +459,8 @@ def record_commune_level_reporter(args):
         #  Let's save the commune level reporter
         CommuneLevelReporters.objects.create(commune = args["concerned_commune"], reporter_phone_number = args['phone'], reporter_name = args['text'].split('#')[1], date_registered = datetime.datetime.now().date())
         args["valide"] = True
-        args["info_to_contact"] = "Tu es bien enregistre dans la liste des rapporteurs du niveau communal"
+        #args["info_to_contact"] = "Tu es bien enregistre dans la liste des rapporteurs du niveau communal"
+        args["info_to_contact"] = "Uhejeje gushirwa ku rutonde rwabatanga ubutumwa bo ku rwego rwa komine"
     if(args['text'].split('#')[0].upper() == 'RLRM'):
         args['mot_cle'] = 'REGM'
 
@@ -422,7 +468,8 @@ def record_commune_level_reporter(args):
         if(args['valide'] is False):
             #  This contact is not a commune level reporter and can't do the update
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+            #args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+            args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bo ku rwego rwa komine"
             return
 
         #  Let's check if the message sent is composed by an expected number of values
@@ -444,7 +491,8 @@ def record_commune_level_reporter(args):
         the_concerned_reporter.reporter_name = args['text'].split('#')[1]
         the_concerned_reporter.save()
         args["valide"] = True
-        args["info_to_contact"] = "Mise a jour reussie"
+        #args["info_to_contact"] = "Mise a jour reussie"
+        args["info_to_contact"] = "Guhindura ingene wanditswe bigenze neza"
 
 
 def record_water_network(args):
@@ -456,7 +504,8 @@ def record_water_network(args):
     if(args['valide'] is False):
         #  This contact is not a commune level reporter and can't register water network
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+        #args['info_to_contact'] = "Erreur. Tu n es pas enregistre dans la liste des rapporteurs du niveau communal"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -477,7 +526,8 @@ def record_water_network(args):
 
     WaterNetWork.objects.create(commune = args['the_commune'], water_network_name = args["water_network_name"], reporter = args['the_sender'], length_of_network = 0, water_network_code = args['water_network_code'])
     args["valide"] = True
-    args["info_to_contact"] = "Le reseau d eau est bien enregistre. Son code est : "+args['water_network_code']
+    #args["info_to_contact"] = "Le reseau d eau est bien enregistre. Son code est : "+args['water_network_code']
+    args["info_to_contact"] = "Iyandikwa ry umugende wamazi rigenze neza. Nomero yawo ni : "+args['water_network_code']
 
 
 
@@ -492,7 +542,8 @@ def record_local_reporter(args):
         if(args['valide'] is True):
             #  This contact is already a colline level reporter and can't do the registration the second time
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message de modification d enregistrement"
+            #args['info_to_contact'] = "Erreur. Vous vous etes deja enregistre. Si vous voulez modifier votre enregistrement, envoyer le message de modification d enregistrement"
+            args['info_to_contact'] = "Ikosa. Warahejeje kwiyandikisha. Ushaka guhindura ingene wanditswe, rungika mesaje yagenewe kubikora"
             return
 
         #  Let's check if the message sent is composed by an expected number of values
@@ -530,7 +581,8 @@ def record_local_reporter(args):
 
         # Let's check if the value sent for number of households is valid
         args['number_to_check'] = args['text'].split('#')[7]
-        args['value_meaning'] = "Nombre de menages"
+        #args['value_meaning'] = "Nombre de menages"
+        args['value_meaning'] = "igitigiri c ingo"
         check_is_number(args)
         if not args['valide']:
             return
@@ -538,7 +590,8 @@ def record_local_reporter(args):
 
         # Let's check if the value sent for number of vulnerable households is valid
         args['number_to_check'] = args['text'].split('#')[8]
-        args['value_meaning'] = "Nombre de menages vulnerables"
+        #args['value_meaning'] = "Nombre de menages vulnerables"
+        args['value_meaning'] = "igitigiri c ingo zaba ntahonikora"
         check_is_number(args)
         if not args['valide']:
             return
@@ -546,9 +599,10 @@ def record_local_reporter(args):
 
 
         # The value at the position 9 should be OUI or NON
-        if(args['text'].split('#')[9].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
+        if(args['text'].split('#')[9].upper() != "EGO" and  args['text'].split('#')[4].upper() != "OYA"):
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'OUI' ou 'NON'"
+            #args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'OUI' ou 'NON'"
+            args['info_to_contact'] = "Ikosa. Mu kumenyesha ko iryo vomo rikora canke ridakora, koresha akajambo 'EGO' canke 'OYA'"
             return
         if(args['text'].split('#')[9].upper() != "OUI"):
             args['wp_works'] = True
@@ -560,7 +614,8 @@ def record_local_reporter(args):
         reporter = LocalLevelReporter.objects.create(reporter_phone_number = args['phone'], reporter_name = args["reporter_name"], colline = args["concerned_colline"])
         WaterSourceEndPoint.objects.create(water_point_name = args["water_point_name"], water_point_type = args["concerned_water_point_type"], colline = args["concerned_colline"], network = args["concerned_water_network"], reporter = reporter, number_of_households = args['number_of_households'], number_of_vulnerable_households = args['number_of_vulnerable_households'], water_point_functional = args['wp_works'])
 
-        args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
+        #args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
+        args["info_to_contact"] = "Ivomo '"+args["water_point_name"]+"' ryanditswe neza"
 
     if(args['text'].split('#')[0].upper() == 'RLM'):
         # This contact is doing an update
@@ -579,7 +634,8 @@ def record_problem_report(args):
     if not args['valide']:
         #  This contact is not a colline level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        args['info_to_contact'] = "Ikosa. Ntiwiyandikishije ku rutonde rw abatanga ubutumwa bwerekeye amavomo"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -613,22 +669,23 @@ def record_problem_report(args):
         return
 
     # The value at the position 4 should be OUI or NON
-    if(args['text'].split('#')[4].upper() != "OUI" and  args['text'].split('#')[4].upper() != "NON"):
+    if(args['text'].split('#')[4].upper() != "EGO" and  args['text'].split('#')[4].upper() != "OYA"):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Pour indiquer si le probleme est resolu ou pas, utiliser le mot 'OUI' ou 'NON'"
+        args['info_to_contact'] = "Ikosa. Mu kumenyesha ko ingorane yaheze canke itaheze, koresha akajambo 'EGO' ou 'OYA'"
         return
-    if(args['text'].split('#')[4].upper() != "OUI"):
+    if(args['text'].split('#')[4].upper() != "EGO"):
         args['problem_solved'] = False
     else:
         args['problem_solved']  = True
 
 
     # The value at the position 5 should be OUI or NON
-    if(args['text'].split('#')[5].upper() != "OUI" and  args['text'].split('#')[5].upper() != "NON"):
+    if(args['text'].split('#')[5].upper() != "EGO" and  args['text'].split('#')[5].upper() != "OYA"):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'OUI' ou 'NON'"
+        #args['info_to_contact'] = "Erreur. Pour indiquer s il y a eu des cas de diarrhee ou pas, utiliser le mot 'OUI' ou 'NON'"
+        args['info_to_contact'] = "Ikosa. Mu kumenyesha ko habonetse indwara zo gucibwamwo canke atazabonetse, koresha akajambo 'EGO' canke 'OYA'"
         return
-    if(args['text'].split('#')[5].upper() != "OUI"):
+    if(args['text'].split('#')[5].upper() != "EGO"):
         args['is_there_diarrhea_case'] = False
     else:
         args['is_there_diarrhea_case'] = True
@@ -640,7 +697,8 @@ def record_problem_report(args):
     # Let's record the problem report
     WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'], wpp_code = wpp_code)
 
-    args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
+    #args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
+    args['info_to_contact'] = "Mesaje ivuga ingorane ibombo rifise yashitse. Iyo ngorane ihawe nomero "+str(wpp_code)
 
 
 def record_problem_resolution_report(args):
@@ -652,7 +710,8 @@ def record_problem_resolution_report(args):
     if not args['valide']:
         #  This contact is not a colline level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        args['info_to_contact'] = "Ikosa. Ntiwiyandikishije ku rutonde rw abatanga ubutumwa bwerekeye amavomo"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -668,7 +727,8 @@ def record_problem_resolution_report(args):
 
     # Let's check if the value sent for water point problem code is valid
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Code de la panne"
+    #args['value_meaning'] = "Code de la panne"
+    args['value_meaning'] = "izina ry ingorane"
     check_is_number(args)
     if not args['valide']:
         return
@@ -689,10 +749,12 @@ def record_problem_resolution_report(args):
         concerned_wpp.resolve_date = datetime.datetime.now().date()
         concerned_wpp.resolved_at = args["resolver_level"]
         concerned_wpp.save()
-        args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
+        #args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
+        args['info_to_contact'] = "Mesaje ivuga ko ingorane y ivomo yarifise nomero '"+str(args['wpp_code'])+"' yashitse neza"
     else:
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Il n y a pas de probleme de code '"+str(args['wpp_code'])+"'"
+        #args['info_to_contact'] = "Erreur. Il n y a pas de probleme de code '"+str(args['wpp_code'])+"'"
+        args['info_to_contact'] = "Ikosa. Nta ngorane y ivomo izwi ifise iyo nomero '"+str(args['wpp_code'])+"'"
 
 
 
@@ -706,7 +768,8 @@ def record_beneficaries_first_month(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -717,7 +780,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if value sent for number of water point commities is valid
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Nombre des commites des points d eau"
+    #args['value_meaning'] = "Nombre des commites des points d eau"
+    args['value_meaning'] = "igitigiri c amakomite"
     check_is_number(args)
     if not args['valide']:
         return
@@ -725,7 +789,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if value sent for number of households is valid
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Nombre de menages"
+    #args['value_meaning'] = "Nombre de menages"
+    args['value_meaning'] = "igitigiri c ingo"
     check_is_number(args)
     if not args['valide']:
         return
@@ -733,7 +798,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if value sent for number of vulnerable households is valid
     args['number_to_check'] = args['text'].split('#')[3]
-    args['value_meaning'] = "Nombre de menages vulnerables"
+    #args['value_meaning'] = "Nombre de menages vulnerables"
+    args['value_meaning'] = "igitigiri c ingo za ba ntahonikora"
     check_is_number(args)
     if not args['valide']:
         return
@@ -742,7 +808,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[4]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -751,7 +818,8 @@ def record_beneficaries_first_month(args):
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
     args['value_to_check'] = args['text'].split('#')[4]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
     if not args['valide']:
@@ -759,7 +827,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -767,7 +836,8 @@ def record_beneficaries_first_month(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -797,7 +867,8 @@ def record_water_sources_points(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -819,7 +890,8 @@ def record_water_sources_points(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -828,7 +900,8 @@ def record_water_sources_points(args):
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
     args['value_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
     if not args['valide']:
@@ -836,7 +909,8 @@ def record_water_sources_points(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -844,7 +918,8 @@ def record_water_sources_points(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -854,7 +929,8 @@ def record_water_sources_points(args):
     nwp_set = NumberOfWaterSourceEndPoint.objects.filter(commune = args['the_commune'], report_type = "EXISTING")
     if(len(nwp_set) > 0):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+        #args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+        args['info_to_contact'] = "Ikosa. Iyo raporo yaramaze gutangwa na komine ukoreramwo"
         return
 
     for i in range(1,number_of_wp_types+1):
@@ -869,7 +945,8 @@ def record_water_sources_points(args):
             break
 
     if args['valide']:
-        args['info_to_contact'] = "Le rapport concernant les points d eau existants est bien recu"
+        #args['info_to_contact'] = "Le rapport concernant les points d eau existants est bien recu"
+        args['info_to_contact'] = "Mesaje ivuga amavomo ahari yashitse neza"
 
 
 
@@ -883,7 +960,8 @@ def record_additional_water_sources_points(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -905,7 +983,8 @@ def record_additional_water_sources_points(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -914,7 +993,8 @@ def record_additional_water_sources_points(args):
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
     args['value_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
     if not args['valide']:
@@ -922,7 +1002,8 @@ def record_additional_water_sources_points(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -930,7 +1011,8 @@ def record_additional_water_sources_points(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -947,7 +1029,8 @@ def record_additional_water_sources_points(args):
             break
 
     if args['valide']:
-        args['info_to_contact'] = "Le rapport concernant les nouveaux points d eau est bien recu"
+        #args['info_to_contact'] = "Le rapport concernant les nouveaux points d eau est bien recu"
+        args['info_to_contact'] = "Mesaje ivuga amavomo mashasha yashitse neza"
 
 
 
@@ -960,7 +1043,7 @@ def record_functional_water_sources_points(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -982,7 +1065,8 @@ def record_functional_water_sources_points(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -991,7 +1075,8 @@ def record_functional_water_sources_points(args):
     # Let's check if the reporting year is valid. It is the year concerned by the report.
     # It's not the year this report is sent. It may be past year or current. Not future.
     args['value_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     args['lower_limit'] = 2017
     check_is_not_future_year(args)
     if not args['valide']:
@@ -999,7 +1084,8 @@ def record_functional_water_sources_points(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1007,7 +1093,8 @@ def record_functional_water_sources_points(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -1024,7 +1111,8 @@ def record_functional_water_sources_points(args):
             break
 
     if args['valide']:
-        args['info_to_contact'] = "Le rapport concernant le fonctionnement des points d eau est bien recu"
+        #args['info_to_contact'] = "Le rapport concernant le fonctionnement des points d eau est bien recu"
+        args['info_to_contact'] = "Mesaje ivuga amavomo akora yashitse neza"
 
 
 
@@ -1049,7 +1137,8 @@ def record_annual_budget(args):
 
     # Let's check if value sent for budget amount is an int
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Budget annuel"
+    #args['value_meaning'] = "Budget annuel"
+    args['value_meaning'] = "amahera ategekanijwe gukoreshwa mu mwaka"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1057,7 +1146,8 @@ def record_annual_budget(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_year(args)
     if not args['valide']:
         return
@@ -1069,19 +1159,22 @@ def record_annual_budget(args):
         one_budget_row = budget_set[0]
         if(one_budget_row.annual_badget):
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            #args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            args['info_to_contact'] = "Ikosa. Iyo mesaje yaramaze gutangwa na komine ukoreramwo"
             return
         else:
             args['valide'] = True
             one_budget_row.annual_badget = args['annual_budget']
             one_budget_row.save()
-            args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+            #args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+            args['info_to_contact'] = "Mesaje ivuga ivyubutunzi yashitse neza"
             return
 
     ExpectedBudgetExpenditureAndAnnualBudget.objects.create(commune = args['the_commune'], annual_badget = args['annual_budget'], reporting_year = args['reporting_year'])
 
 
-    args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+    #args['info_to_contact'] = "Le rapport de budget annuel est bien recu"
+    args['info_to_contact'] = "Mesaje ivuga ivyubutunzi yashitse neza"
 
 
 
@@ -1094,7 +1187,8 @@ def record_expected_expenditure(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -1105,7 +1199,8 @@ def record_expected_expenditure(args):
 
     # Let's check if value sent for expected annual expenditure is an int
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Prevision des depenses annuelles"
+    #args['value_meaning'] = "Prevision des depenses annuelles"
+    args['value_meaning'] = "Amahera yitezwe gukoreshwa mu mwaka"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1113,7 +1208,8 @@ def record_expected_expenditure(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_year(args)
     if not args['valide']:
         return
@@ -1125,19 +1221,22 @@ def record_expected_expenditure(args):
         one_budget_row = budget_set[0]
         if(one_budget_row.expected_annual_expenditure):
             args['valide'] = False
-            args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            #args['info_to_contact'] = "Erreur. Ce rapport avait ete deja envoye par votre commune."
+            args['info_to_contact'] = "Ikosa. Iyo mesaje yaramaze gutangwa na komine ukoreramwo"
             return
         else:
             args['valide'] = True
             one_budget_row.expected_annual_expenditure = args['expected_annual_expenditure']
             one_budget_row.save()
-            args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+            #args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+            args['info_to_contact'] = "Mesaje ivuga amahera ategekanijwe gukoreshwa umwaka wose yashitse neza"
             return
 
     ExpectedBudgetExpenditureAndAnnualBudget.objects.create(commune = args['the_commune'], expected_annual_expenditure = args['expected_annual_expenditure'], reporting_year = args['reporting_year'])
 
 
-    args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+    #args['info_to_contact'] = "Le rapport de prevision des depenses annuelles est bien recu"
+    args['info_to_contact'] = "Mesaje ivuga amahera ategekanijwe gukoreshwa umwaka wose yashitse neza"
 
 
 
@@ -1150,7 +1249,8 @@ def record_income_money(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -1161,7 +1261,8 @@ def record_income_money(args):
 
     # Let's check if the value sent for amount collected is an int
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Montant collecte"
+    #args['value_meaning'] = "Montant collecte"
+    args['value_meaning'] = "Amahera yatojwe"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1169,7 +1270,8 @@ def record_income_money(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_year(args)
     if not args['valide']:
         return
@@ -1177,7 +1279,8 @@ def record_income_money(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[3]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1185,7 +1288,8 @@ def record_income_money(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[3]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -1195,11 +1299,13 @@ def record_income_money(args):
 
     if(len(monthly_income_set) > 0):
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le montant collecte pendant cette periode"
+        #args['info_to_contact'] = "Erreur. Votre commune avait deja donne le montant collecte pendant cette periode"
+        args['info_to_contact'] = "Ikosa. Komine ukoreramwo yaramaze gutanga iyo mesaje"
         return
     else:
         MonthlyIncome.objects.create(commune = args['the_commune'], total_income = args['amount_collected'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
-        args['info_to_contact'] = "Le rapport de montant collecte est bien recu"
+        #args['info_to_contact'] = "Le rapport de montant collecte est bien recu"
+        args['info_to_contact'] = "Mesaje ivuga amahera yabonetse yashitse neza"
 
 
 def record_expenditure(args):
@@ -1211,7 +1317,8 @@ def record_expenditure(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -1222,7 +1329,8 @@ def record_expenditure(args):
 
     # Let's check if the value sent for Amount spent on Services and Repairs is an int
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Montant depense pour les reparations"
+    #args['value_meaning'] = "Montant depense pour les reparations"
+    args['value_meaning'] = "amahera yakoreshejwe mu gusanura"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1231,7 +1339,8 @@ def record_expenditure(args):
 
     # Let's check if the value sent for Amount spent on Equipment and logistics is an int
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Montant depense pour les Equipments"
+    #args['value_meaning'] = "Montant depense pour les Equipments"
+    args['value_meaning'] = "amahera yakoreshejwe mu kuguri ibikoresho"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1240,7 +1349,8 @@ def record_expenditure(args):
 
     # Let's check if the value sent for Amount spent on Salaries is an int
     args['number_to_check'] = args['text'].split('#')[3]
-    args['value_meaning'] = "Montant depense pour les salaires"
+    #args['value_meaning'] = "Montant depense pour les salaires"
+    args['value_meaning'] = "amahera yakoreshejwe ku vyerekeye imishahara"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1249,7 +1359,8 @@ def record_expenditure(args):
 
     # Let's check if the Amount spent on Administrative costs is an int
     args['number_to_check'] = args['text'].split('#')[4]
-    args['value_meaning'] = "Montant depense pour l administration"
+    #args['value_meaning'] = "Montant depense pour l administration"
+    args['value_meaning'] = "amahera yakoreshejwe mu bikorwa vyo kubiro"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1257,7 +1368,8 @@ def record_expenditure(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka iyo raporo yerekeye"
     check_is_year(args)
     if not args['valide']:
         return
@@ -1265,7 +1377,8 @@ def record_expenditure(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "Ukwezi iyo raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1273,7 +1386,8 @@ def record_expenditure(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[6]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "Ukwezi iyo raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -1282,7 +1396,8 @@ def record_expenditure(args):
 
     if len(expenditure_set) > 0:
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des depenses pour cette periode"
+        #args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des depenses pour cette periode"
+        args['info_to_contact'] = "Ikosa. Komine ukoreramwo yaramaze gutanga iyo mesaje ivuga amahera yakoreshejwe"
         return
     else:
         number_of_expensy_types = len(args['text'].split('#')) - 3
@@ -1299,7 +1414,8 @@ def record_expenditure(args):
                 break
 
     if args['valide']:
-        args['info_to_contact'] = "Le rapport concernant les depenses est bien recu"
+        #args['info_to_contact'] = "Le rapport concernant les depenses est bien recu"
+        args['info_to_contact'] = "Mesaje ivuga amahera yakoreshejwe yashitse neza"
 
 
 
@@ -1312,7 +1428,8 @@ def record_network_problem(args):
     if not args['valide']:
         #  This contact is not a commune level reporter
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs communaux"
+        args['info_to_contact'] = "Ikosa. Ntiwanditswe ku rutonde rwabatanga ubutumwa bwo ku rwego rwa komine"
         return
 
     #  Let's check if the message sent is composed by an expected number of values
@@ -1323,7 +1440,8 @@ def record_network_problem(args):
 
     # Let's check if the value sent for number of network problems is an int
     args['number_to_check'] = args['text'].split('#')[1]
-    args['value_meaning'] = "Nombre de pannes sur le reseau"
+    #args['value_meaning'] = "Nombre de pannes sur le reseau"
+    args['value_meaning'] = "igitigiri cingorane ziri kuruwo mugende"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1331,7 +1449,8 @@ def record_network_problem(args):
 
     # Let's check if the value sent for days the problem lasted is an int
     args['number_to_check'] = args['text'].split('#')[2]
-    args['value_meaning'] = "Nombre de jours que le reseau est en panne"
+    #args['value_meaning'] = "Nombre de jours que le reseau est en panne"
+    args['value_meaning'] = "iminsi iheze umugende ufise ingorane"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1345,7 +1464,8 @@ def record_network_problem(args):
 
     # Let's check if value sent for reporting year is an int
     args['number_to_check'] = args['text'].split('#')[4]
-    args['value_meaning'] = "Annee concernee par le rapport"
+    #args['value_meaning'] = "Annee concernee par le rapport"
+    args['value_meaning'] = "umwaka raporo yerekeye"
     check_is_year(args)
     if not args['valide']:
         return
@@ -1353,7 +1473,8 @@ def record_network_problem(args):
 
     # Let's check if value sent for reporting month is an int
     args['number_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "Ukwezi raporo yerekeye"
     check_is_number(args)
     if not args['valide']:
         return
@@ -1361,7 +1482,8 @@ def record_network_problem(args):
 
     # Let's check if the value sent for reporting month is between 1 and 12
     args['value_to_check'] = args['text'].split('#')[5]
-    args['value_meaning'] = "Moi concerne par le rapport"
+    #args['value_meaning'] = "Moi concerne par le rapport"
+    args['value_meaning'] = "Ukwezi raporo yerekeye"
     check_month_between_1_12(args)
     if not args['valide']:
         return
@@ -1372,10 +1494,12 @@ def record_network_problem(args):
 
     if len(water_network_problem_set) > 0:
         args['valide'] = False
-        args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des problemes des reseaux d eau pour cette periode"
+        #args['info_to_contact'] = "Erreur. Votre commune avait deja donne le rapport des problemes des reseaux d eau pour cette periode"
+        args['info_to_contact'] = "Ikosa. Iyo mesaje yaramaze gutangwa na komine ukoreramwo"
         return
 
     NumberOfWaterNetworkProblems.objects.create(commune = args['the_commune'], most_frequent_water_network_problem_type = args["concerned_w_network_pbm_type"], number_of_water_network_problems = args['nb_de_pannes_sur_le_reseau'], number_of_days = args['nb_de_jours_reseau_en_panne'], reporting_year = args['reporting_year'], reporting_month = args['reporting_month'])
-    args['info_to_contact'] = "Le rapport concernant les problemes des reseaux d eau est bien recu"
+    #args['info_to_contact'] = "Le rapport concernant les problemes des reseaux d eau est bien recu"
+    args['info_to_contact'] = "Mesaje ivuga ingorane zimigende yamazi yashitse neza"
 
 
