@@ -750,7 +750,7 @@ def record_problem_resolution_report(args):
         concerned_wpp.resolved_at = args["resolver_level"]
         concerned_wpp.save()
         #args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
-        args['info_to_contact'] = "Mesaje ivuga ko ingorane y ivomo yarifise nomero '"+str(args['wpp_code'])+"' yashitse neza"
+        args['info_to_contact'] = "Mesaje ivuga ivyerekeye ingorane nomero '"+str(args['wpp_code'])+"' ivomo ryari rifise yashitse neza"
     else:
         args['valide'] = False
         #args['info_to_contact'] = "Erreur. Il n y a pas de probleme de code '"+str(args['wpp_code'])+"'"
