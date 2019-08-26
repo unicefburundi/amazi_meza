@@ -322,6 +322,18 @@
 		        return false;
 		    }
 
+
+
+		    var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
+				  function onEachFeature(feature, layer) {
+				    if (feature.properties && feature.properties.popupContent) {
+				      layer.bindPopup(feature.properties.popupContent);
+				    }
+				  }
+				  function map_init_basic(map, options) {
+				L.geoJson(collection, {onEachFeature: onEachFeature}).addTo(map);
+				  }
+
 		</script>
 {% endblock %}
 
