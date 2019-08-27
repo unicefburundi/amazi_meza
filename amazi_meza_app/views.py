@@ -37,9 +37,6 @@ def mapping(request):
     d["pagetitle"] = "Mapping"
     d["provinces"] = Province.objects.all()
     d["all_water_points"] = WaterSourceEndPoint.objects.all()
-    print("111>>>")
-    print(d["all_water_points"])
-    print("111---")
     return render(request, 'mapping.html', d)
 
 def map(request):
@@ -47,9 +44,7 @@ def map(request):
     d["pagetitle"] = "Mapping"
     d["provinces"] = Province.objects.all()
     d["all_water_points"] = WaterSourceEndPoint.objects.all()
-    print("111>>>")
-    print(d["all_water_points"])
-    print("111---")
+    d["MAP_TOKEN"] = settings.MAP_TOKEN
     return render(request, 'map.html', d)
 
 def finance(request):
