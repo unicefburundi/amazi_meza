@@ -1,0 +1,67 @@
+{% extends "base2.html" %}
+{% load geojson_tags %}
+{% load staticfiles %}
+{% load i18n %}
+{% load leaflet_tags %}
+
+
+
+{% block head %}
+	<style type="text/css">
+
+		.leaflet-container {
+			height: 700px;
+		}
+
+	</style>
+
+	<script language="JavaScript">
+
+		function onEachFeature(feature, layer) {
+			if (feature.properties && feature.properties.popupContent) {
+				layer.bindPopup(feature.properties.popupContent);
+			}
+		}
+
+		$(document).ready(function() {
+			var streets   = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiam9obm1pY2hlbCIsImEiOiJjaW9iOW1vbHUwMGEzdnJseWNranhiMHpxIn0.leVOjMBazNl6v4h9MT7Glw',{id: 'MapID', attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'}),
+				grayscale = L.tileLayer('https://api.mapbox.com/styles/v1/johnmichel/ciobach7h0084b3nf482gfvvr/tiles/{z}/{x}/{y}?access_token=pk.eyJ1Ijoiam9obm1pY2hlbCIsImEiOiJjaW9iOW1vbHUwMGEzdnJseWNranhiMHpxIn0.leVOjMBazNl6v4h9MT7Glw', {id: 'MapID', attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'}),
+				satellite   = L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiam9obm1pY2hlbCIsImEiOiJjaW9iOW1vbHUwMGEzdnJseWNranhiMHpxIn0.leVOjMBazNl6v4h9MT7Glw', {id: 'MapID', attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'});
+
+		var all_water_points = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
+
+		all_water_points = L.geoJson(all_water_points, {onEachFeature: onEachFeature});
+
+		var map = L.map('map', {
+			center: [-3.5, 29.9],
+			zoom: 9,
+			layers: [streets, all_water_points]
+		});
+
+		var baseMaps = {
+			"Streets": streets,
+			"Satellite": satellite,
+			"Grayscale": grayscale
+		};
+
+		var overlayMaps = {
+		    "All Water Points": all_water_points
+		};
+
+		L.control.layers(
+			baseMaps, overlayMaps).addTo(map);
+		});
+
+	</script>
+{% endblock %}
+
+
+
+
+{% block container %}
+
+	<div id="map" style="margin: 0 auto">
+		
+	</div>		
+
+{% endblock %}

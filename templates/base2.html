@@ -59,8 +59,6 @@
 		<script type="text/javascript" src="{% static 'js/spin.js' %}"></script>
 		<script type="text/javascript" src="{% static 'js/sonic.js-master/src/sonic.js' %}"></script>
 
-		<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
-
 		{% block head %}
 		
 		{% endblock %}
@@ -231,6 +229,7 @@
 				<div class="fitcontent" id="nav" style="background-color: #80bbff;">
 					<ul id="menu-main_menu">
 						<li><b><a role="button" href="{% url 'landing' %} ">{% trans "Home" %}</a></b></li>
+						<li><b><a role="button" href="{% url 'map' %} ">{% trans "Map" %}</a></b></li>
 						<li><b><a role="button" href="{% url 'problems' %} ">{% trans "Problems" %}</a></b></li>
 						<li><b><a role="button" href="{% url 'mapping' %} ">{% trans "Mapping" %}</a></b></li>
 						<li><b><a role="button" href="{% url 'finance' %} ">{% trans "Finance" %}</a></b></li>

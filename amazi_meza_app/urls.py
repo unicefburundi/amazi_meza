@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^home$', views.home, name='home'),
     url(r'^problems$', views.problems, name='problems'),
     url(r'^mapping$', views.mapping, name='mapping'),
+    url(r'^map$', views.map, name='map'),
     url(r'^finance$', views.finance, name='finance'),
     url(r'external_request', handel_rapidpro_request, name="handel_request"),
     url(r'^getcollinesincommune', views.getCollinesInCommune, name='getcollinesincommune'),

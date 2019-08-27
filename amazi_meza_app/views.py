@@ -42,6 +42,16 @@ def mapping(request):
     print("111---")
     return render(request, 'mapping.html', d)
 
+def map(request):
+    d = {}
+    d["pagetitle"] = "Mapping"
+    d["provinces"] = Province.objects.all()
+    d["all_water_points"] = WaterSourceEndPoint.objects.all()
+    print("111>>>")
+    print(d["all_water_points"])
+    print("111---")
+    return render(request, 'map.html', d)
+
 def finance(request):
     d = {}
     d["pagetitle"] = "Finance"
