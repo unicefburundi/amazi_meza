@@ -4,6 +4,7 @@ from import_export.admin import ImportExportModelAdmin
 from leaflet.admin import LeafletGeoAdmin
 
 from django.contrib.gis.admin import OSMGeoAdmin
+from import_export.admin import ImportExportModelAdmin
 
 
 @admin.register(LocalLevelReporter)
@@ -77,7 +78,7 @@ class WaterNetWorkAdmin(ImportExportModelAdmin):
 
 
 @admin.register(WaterSourceEndPoint)
-class WaterSourceEndPointAdmin(OSMGeoAdmin):
+class WaterSourceEndPointAdmin(OSMGeoAdmin, ImportExportModelAdmin):
     list_display = ('water_point_name', 'water_point_type', 'get_location', 'get_province_name')
 
     def get_location(self, obj):
