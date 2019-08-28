@@ -3,6 +3,8 @@ from amazi_meza_app.models import *
 from import_export.admin import ImportExportModelAdmin
 from leaflet.admin import LeafletGeoAdmin
 
+from django.contrib.gis.admin import OSMGeoAdmin
+
 
 @admin.register(LocalLevelReporter)
 class LocalLevelReporterAdmin(ImportExportModelAdmin):
@@ -74,8 +76,21 @@ class WaterNetWorkAdmin(ImportExportModelAdmin):
     pass
 
 
+@admin.register(WaterSourceEndPoint)
+class WaterSourceEndPointAdmin(OSMGeoAdmin):
+    list_display = ('water_point_name', 'water_point_type', 'get_location', 'get_province_name')
 
-admin.site.register(WaterSourceEndPoint, LeafletGeoAdmin)
+    def get_location(self, obj):
+        lat_long = obj.geom['coordinates']
+        return lat_long
+
+    def get_province_name(self, obj):
+        return obj.colline.commune.province.name
+
+    get_location.short_description = "Location"
+    get_province_name.short_description = "Province"
+
+    list_filter = ('colline__commune__province__name', 'water_point_type')
 
 
 @admin.register(ActionsForWaterPointProblem)
