@@ -79,7 +79,7 @@ class WaterNetWorkAdmin(ImportExportModelAdmin):
 
 @admin.register(WaterSourceEndPoint)
 class WaterSourceEndPointAdmin(OSMGeoAdmin, ImportExportModelAdmin):
-    list_display = ('water_point_name', 'water_point_type', 'get_location', 'get_province_name')
+    list_display = ('water_point_name', 'water_point_type', 'get_location', 'get_province_name', 'get_commune_name')
 
     def get_location(self, obj):
         lat_long = obj.geom['coordinates']
@@ -88,10 +88,13 @@ class WaterSourceEndPointAdmin(OSMGeoAdmin, ImportExportModelAdmin):
     def get_province_name(self, obj):
         return obj.colline.commune.province.name
 
+    def get_commune_name(self, obj):
+        return obj.colline.commune.name
+
     get_location.short_description = "Location"
     get_province_name.short_description = "Province"
 
-    list_filter = ('colline__commune__province__name', 'water_point_type')
+    list_filter = ('colline__commune__province__name', 'colline__commune__name', 'water_point_type')
 
 
 @admin.register(ActionsForWaterPointProblem)
