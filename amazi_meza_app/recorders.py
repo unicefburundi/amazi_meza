@@ -218,7 +218,7 @@ def check_water_point_type_exists(args):
 
     water_point_type = args["water_point_type"]
 
-    water_point_type_set = WaterPointType.objects.filter(name__iexact = water_point_type)
+    water_point_type_set = WaterPointType.objects.filter(code__iexact = water_point_type)
 
     if len(water_point_type_set) > 0:
         args["valide"] = True

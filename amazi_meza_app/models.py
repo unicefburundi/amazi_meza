@@ -138,11 +138,12 @@ class WaterPointProblemTypes(models.Model):
 
 class WaterPointType(models.Model):
     ''' In this model will be stored water point types '''
+    code = models.CharField(max_length=10, null=True)
     name = models.CharField(max_length=50)
     priority = models.IntegerField(default=1, help_text="La plus petite valeur est 1")
 
     def __unicode__(self):
-        return "{0}; priorite : {1}".format(self.name, self.priority)
+        return "{0} - {1}".format(self.code, self.name)
 
 
 class NumberOfWaterSourceEndPoint(models.Model):
