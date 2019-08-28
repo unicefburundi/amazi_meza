@@ -5,6 +5,7 @@ from leaflet.admin import LeafletGeoAdmin
 
 from django.contrib.gis.admin import OSMGeoAdmin
 from import_export.admin import ImportExportModelAdmin
+import ast
 
 
 @admin.register(LocalLevelReporter)
@@ -82,7 +83,10 @@ class WaterSourceEndPointAdmin(OSMGeoAdmin, ImportExportModelAdmin):
     list_display = ('water_point_name', 'water_point_type', 'get_location', 'get_commune_name', 'get_province_name')
 
     def get_location(self, obj):
-        lat_long = obj.geom['coordinates']
+        if isinstance(obj.geom, dict):
+            lat_long = obj.geom['coordinates']
+        else:
+            lat_long = ast.literal_eval(obj.geom)['coordinates']
         return lat_long
 
     def get_province_name(self, obj):
@@ -95,7 +99,7 @@ class WaterSourceEndPointAdmin(OSMGeoAdmin, ImportExportModelAdmin):
     get_province_name.short_description = "Province"
     get_commune_name.short_description = "Commune"
 
-    list_filter = ('colline__commune__province__name', 'colline__commune__name', 'water_point_type')
+    list_filter = ('water_point_type', 'colline__commune__province__name', 'colline__commune__name')
 
 
 @admin.register(ActionsForWaterPointProblem)

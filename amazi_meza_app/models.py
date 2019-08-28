@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.db import models
 from public_administration_structure_app.models import *
 from djgeojson.fields import PointField
+import ast
+
 
 
 class LocalLevelReporter(models.Model):
@@ -226,6 +228,13 @@ class WaterSourceEndPoint(models.Model):
           self.reporter.reporter_name,
           self.reporter.reporter_phone_number
           )
+
+    def save(self, *args, **kwargs):
+        if isinstance(self.geom, dict):
+            pass
+        else:
+            self.geom = ast.literal_eval(self.geom)
+        super(WaterSourceEndPoint, self).save(*args, **kwargs)
 
 class ActionsForWaterPointProblem(models.Model):
     ''' In this model will be stored possible actions for water point
