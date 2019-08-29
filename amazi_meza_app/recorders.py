@@ -373,6 +373,30 @@ def check_number_is_int(args):
         args["info_to_contact"] = "Ico wanditse mu kibanza ca '"+str(indicated_position)+"' nico"
 
 
+def check_is_float(args):
+    """ This function checks if a given value is a float """
+
+    expression = r"^(-?[0-9]+.[0-9]+)$|^(-?[0-9]+)$|^(-?[0-9]+,[0-9]+)$"
+
+    value_to_check = args["float_value"]
+
+    if re.search(expression, value_to_check) is None:
+        args["valide"] = False
+        # args['info_to_contact'] = "Erreur. La valeur envoyee pour '"+args["date_meaning"]+"' n est pas valide. Pour corriger,  veuillez reenvoyer un message corrige et commencant par le mot cle "+args['mot_cle']
+        args["info_to_contact"] = (
+            "Ikosa. Ico wanditse kuvyerekeye '"
+            + args["value_meaning"]
+            + "' ntikibaho. Mu gukosora, subira urungike iyo mesaje itangurwa na '"
+            + args["mot_cle"]
+            + "' yanditse neza"
+        )
+    else:
+        args["checked_float"] = value_to_check
+        args["valide"] = True
+        args["info_to_contact"] = (
+            "La valeur envoyee pour '" + args["value_meaning"] + "' est valide."
+        )
+
 
 def check_is_not_future_year(args):
     ''' This function cheks if the year sent is not a future year '''
@@ -698,7 +722,65 @@ def record_problem_report(args):
     WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'], wpp_code = wpp_code)
 
     #args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
-    args['info_to_contact'] = "Mesaje ivuga ingorane ibombo rifise yashitse. Iyo ngorane ihawe nomero "+str(wpp_code)
+    args['info_to_contact'] = (
+        "Mesaje ivuga ingorane ibombo rifise yashitse. Iyo ngorane ihawe nomero "
+        +str(wpp_code)
+        )
+
+
+def record_water_point_location(args):
+    ''' This function is used to record a water point location '''
+
+    args['mot_cle'] = "LO"
+
+    check_if_is_colline_level_reporter(args)
+    if not args['valide']:
+        #  This contact is not a colline level reporter
+        args['valide'] = False
+        #args['info_to_contact'] = "Erreur. Vous ne vous etes pas enregistre dans la liste des rapporteurs collinaires"
+        args['info_to_contact'] = "Ikosa. Ntiwiyandikishije ku rutonde rw abatanga ubutumwa bwerekeye amavomo"
+        return
+
+    #  Let's check if the message sent is composed by an expected number of values
+    args["expected_number_of_values"] = getattr(
+        settings, 'EXPECTED_NUMBER_OF_VALUES', ''
+        )[args['message_type']]
+    check_number_of_values(args)
+    if not args['valide']:
+        return
+
+    # Let's identify the water point this reporter reports for
+    identify_water_point(args)
+    if not args['valide']:
+        return
+
+    args["float_value"] = args['text'].split('#')[1]
+    args["value_meaning"] = "Latitude"
+    check_is_float(args)
+    if not args['valide']:
+        return
+    latitude = args["checked_float"]
+
+    args["float_value"] = args['text'].split('#')[2]
+    args["value_meaning"] = "Longitude"
+    check_is_float(args)
+    if not args['valide']:
+        return
+    longitude = args["checked_float"]
+
+    location = {u'type': u'Point', u'coordinates': [float(longitude), float(latitude)]}
+
+    args['concerned_water_point'].geom = location
+
+    args['concerned_water_point'].save()
+
+    args['info_to_contact'] = (
+        "Mesaje ivuga aho ibombo '"
+        +args['concerned_water_point'].water_point_name
+        +"' riri yashitse."
+        )
+
+
 
 
 def record_problem_resolution_report(args):

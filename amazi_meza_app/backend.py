@@ -23,7 +23,6 @@ def byteify(input):
 def eliminate_unnecessary_spaces(args):
     #the_incoming_message = args['results']['rapport1']['input']
     the_incoming_message = args['input']['text']
-    print("The text before sub             " + the_incoming_message)
     # the_new_message = re.sub(' +',' ',the_incoming_message)
 
     #  Messages from RapidPro comes with spaces replaced by '+'
@@ -149,6 +148,9 @@ def handel_rapidpro_request(request):
     if(incoming_data['message_type']=='NETWORK_PROBLEM'):
         # The contact who sent this message is doing a report of a network problem
         record_network_problem(incoming_data)
+    if(incoming_data['message_type']=='WATER_POINT_LOCATION'):
+        # The contact who sent this message is reporting a water point location
+        record_water_point_location(incoming_data)
 
 
 
@@ -163,8 +165,5 @@ def handel_rapidpro_request(request):
     else:
         # The message haven't been recorded
         response['ok'] = False
-
-
     response['info_to_contact'] = incoming_data['info_to_contact']
-    print response['info_to_contact']
     return response
