@@ -623,7 +623,7 @@ def record_local_reporter(args):
 
 
         # The value at the position 9 should be OUI or NON
-        if(args['text'].split('#')[9].upper() != "EGO" and  args['text'].split('#')[4].upper() != "OYA"):
+        if(args['text'].split('#')[9].upper() != "EGO" and  args['text'].split('#')[9].upper() != "OYA"):
             args['valide'] = False
             #args['info_to_contact'] = "Erreur. Pour indiquer si ce point d eau fonctionne ou non, utiliser le mot 'OUI' ou 'NON'"
             args['info_to_contact'] = "Ikosa. Mu kumenyesha ko iryo vomo rikora canke ridakora, koresha akajambo 'EGO' canke 'OYA'"
@@ -633,10 +633,23 @@ def record_local_reporter(args):
         else:
             args['wp_works']  = False
 
+        longitude = 0
+        latitude = 0
+        location = {u'type': u'Point', u'coordinates': [float(longitude), float(latitude)]}
 
         # Let's record the reporter
         reporter = LocalLevelReporter.objects.create(reporter_phone_number = args['phone'], reporter_name = args["reporter_name"], colline = args["concerned_colline"])
-        WaterSourceEndPoint.objects.create(water_point_name = args["water_point_name"], water_point_type = args["concerned_water_point_type"], colline = args["concerned_colline"], network = args["concerned_water_network"], reporter = reporter, number_of_households = args['number_of_households'], number_of_vulnerable_households = args['number_of_vulnerable_households'], water_point_functional = args['wp_works'])
+        WaterSourceEndPoint.objects.create(
+            water_point_name = args["water_point_name"], 
+            water_point_type = args["concerned_water_point_type"], 
+            colline = args["concerned_colline"], 
+            network = args["concerned_water_network"], 
+            reporter = reporter, 
+            number_of_households = args['number_of_households'], 
+            number_of_vulnerable_households = args['number_of_vulnerable_households'], 
+            water_point_functional = args['wp_works'], 
+            geom = location
+            )
 
         #args["info_to_contact"] = "Le point d eau '"+args["water_point_name"]+"' est bien enregistre"
         args["info_to_contact"] = "Ivomo '"+args["water_point_name"]+"' ryanditswe neza"
