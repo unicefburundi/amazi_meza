@@ -589,7 +589,7 @@ def record_local_reporter(args):
         if not args['valide']:
             return
 
-        args["reporter_name"] =  args['text'].split('#')[3].capitalize()
+        args["reporter_name"] =  args['text'].split('#')[4].capitalize()
 
         # Let's check if the water point name given is unique in that colline
         args["water_point_name"] = args['text'].split('#')[5].upper()
