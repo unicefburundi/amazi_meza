@@ -666,7 +666,7 @@ def record_problem_report(args):
     ''' This function is used to record a water point problem '''
 
     args['mot_cle'] = "RP"
-
+    
     check_if_is_colline_level_reporter(args)
     if not args['valide']:
         #  This contact is not a colline level reporter
@@ -676,7 +676,12 @@ def record_problem_report(args):
         return
 
     #  Let's check if the message sent is composed by an expected number of values
-    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    args["expected_number_of_values"] = getattr(
+        settings, 
+        'EXPECTED_NUMBER_OF_VALUES', 
+        ''
+        )[args['message_type']]
+
     check_number_of_values(args)
     if not args['valide']:
         return
@@ -728,11 +733,24 @@ def record_problem_report(args):
         args['is_there_diarrhea_case'] = True
 
     
-    wpp_code = WaterPointProblem.objects.filter(water_point = args['concerned_water_point']).count()
+    wpp_code = WaterPointProblem.objects.filter(
+        water_point = args['concerned_water_point']
+        ).count()
 
 
     # Let's record the problem report
-    WaterPointProblem.objects.create(water_point = args['concerned_water_point'], problem = args["concerned_w_p_pbm_type"], action_taken = args["concerned_action_taken"], days = args["number_of_days"], problem_solved = args['problem_solved'], case_of_diarrhea = args['is_there_diarrhea_case'], wpp_code = wpp_code)
+    WaterPointProblem.objects.create(
+        water_point = args['concerned_water_point'], 
+        problem = args["concerned_w_p_pbm_type"], 
+        action_taken = args["concerned_action_taken"], 
+        days = args["number_of_days"], 
+        problem_solved = args['problem_solved'], 
+        case_of_diarrhea = args['is_there_diarrhea_case'], 
+        wpp_code = wpp_code
+        )
+
+    args['concerned_water_point'].water_point_functional = False
+    args['concerned_water_point'].save()
 
     #args['info_to_contact'] = "Le rapport de panne est bien recu. Son code est "+str(wpp_code)
     args['info_to_contact'] = (
@@ -810,7 +828,12 @@ def record_problem_resolution_report(args):
         return
 
     #  Let's check if the message sent is composed by an expected number of values
-    args["expected_number_of_values"] = getattr(settings, 'EXPECTED_NUMBER_OF_VALUES', '')[args['message_type']]
+    args["expected_number_of_values"] = getattr(
+        settings, 
+        'EXPECTED_NUMBER_OF_VALUES', 
+        ''
+        )[args['message_type']]
+
     check_number_of_values(args)
     if not args['valide']:
         return
@@ -836,8 +859,11 @@ def record_problem_resolution_report(args):
     if not args['valide']:
         return
 
+    concerned_wpp = WaterPointProblem.objects.filter(
+        water_point = args['concerned_water_point'], 
+        wpp_code = args['wpp_code']
+        )
 
-    concerned_wpp = WaterPointProblem.objects.filter(water_point = args['concerned_water_point'], wpp_code = args['wpp_code'])
     if(len(concerned_wpp) > 0):
         concerned_wpp = concerned_wpp[0]
         concerned_wpp.problem_solved = True
@@ -845,11 +871,28 @@ def record_problem_resolution_report(args):
         concerned_wpp.resolved_at = args["resolver_level"]
         concerned_wpp.save()
         #args['info_to_contact'] = "Le rapport de resolution du probleme '"+str(args['wpp_code'])+"' est bien enregistre."
-        args['info_to_contact'] = "Mesaje ivuga ivyerekeye ingorane nomero '"+str(args['wpp_code'])+"' ivomo ryari rifise yashitse neza"
+        args['info_to_contact'] = (
+            "Mesaje ivuga ivyerekeye ingorane nomero '"
+            +str(args['wpp_code'])
+            +"' ivomo ryari rifise yashitse neza"
+            )
+
+        remaining_problems = WaterPointProblem.objects.filter(
+            water_point = args['concerned_water_point'], 
+            problem_solved = False
+            )
+
+        if(len(remaining_problems) < 1):
+            args['concerned_water_point'].water_point_functional = True
+            args['concerned_water_point'].save()
     else:
         args['valide'] = False
         #args['info_to_contact'] = "Erreur. Il n y a pas de probleme de code '"+str(args['wpp_code'])+"'"
-        args['info_to_contact'] = "Ikosa. Nta ngorane y ivomo izwi ifise iyo nomero '"+str(args['wpp_code'])+"'"
+        args['info_to_contact'] = (
+            "Ikosa. Nta ngorane y ivomo izwi ifise iyo nomero '"
+            +str(args['wpp_code'])
+            +"'"
+            )
 
 
 
