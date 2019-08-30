@@ -44,8 +44,17 @@ def map(request):
     d["pagetitle"] = "Mapping"
     d["provinces"] = Province.objects.all()
     d["all_water_points"] = WaterSourceEndPoint.objects.all()
+    d["functional_water_points"] = WaterSourceEndPoint.objects.filter(
+        water_point_functional = True
+        )
+    d["not_functional_water_points"] = WaterSourceEndPoint.objects.filter(
+        water_point_functional = False
+        )
     d["MAP_TOKEN"] = settings.MAP_TOKEN
-    return render(request, 'map.html', d)
+    return render(
+        request, 
+        'map.html', d
+        )
 
 def finance(request):
     d = {}

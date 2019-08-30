@@ -32,13 +32,17 @@
 				satellite   = L.tileLayer('https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.png?access_token='+my_token+'', {id: 'MapID', attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'});
 
 		var all_water_points = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
+		var functional_water_points = {{ functional_water_points|geojsonfeature:"popupContent"|safe }};
+		var not_functional_water_points = {{ not_functional_water_points|geojsonfeature:"popupContent"|safe }};
 
 		all_water_points = L.geoJson(all_water_points, {onEachFeature: onEachFeature});
+		functional_water_points = L.geoJson(functional_water_points, {onEachFeature: onEachFeature});
+		not_functional_water_points = L.geoJson(not_functional_water_points, {onEachFeature: onEachFeature});
 
 		var map = L.map('map', {
 			center: [-3.5, 29.9],
 			zoom: 9,
-			layers: [streets, all_water_points]
+			layers: [streets, not_functional_water_points]
 		});
 
 		var baseMaps = {
@@ -48,11 +52,15 @@
 		};
 
 		var overlayMaps = {
-		    "All Water Points": all_water_points
+		    //"All Water Points": all_water_points,
+		    "Functional WP": functional_water_points,
+		    "Not Functional WP": not_functional_water_points
 		};
 
 		L.control.layers(
-			baseMaps, overlayMaps).addTo(map);
+			baseMaps, 
+			overlayMaps
+			).addTo(map);
 		});
 
 	</script>

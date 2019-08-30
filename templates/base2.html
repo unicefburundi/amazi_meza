@@ -229,9 +229,19 @@
 				<div class="fitcontent" id="nav" style="background-color: #80bbff;">
 					<ul id="menu-main_menu">
 						<li><b><a role="button" href="{% url 'landing' %} ">{% trans "Home" %}</a></b></li>
-						<li><b><a role="button" href="{% url 'map' %} ">{% trans "Map" %}</a></b></li>
+
+						<li role="presentation" class="dropdown"><b>
+							<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+      {% trans "Mapping" %} <span class="caret"></span>
+    						</a></b>
+							<ul class="dropdown-menu">
+								<li><b><a role="button" href="{% url 'map' %} ">{% trans "Map" %}</a></b></li>
+								<li><b><a role="button" href="{% url 'mapping' %} ">{% trans "Graphs" %}</a></b></li>
+							</ul>
+						</li>
+
 						<li><b><a role="button" href="{% url 'problems' %} ">{% trans "Problems" %}</a></b></li>
-						<li><b><a role="button" href="{% url 'mapping' %} ">{% trans "Mapping" %}</a></b></li>
+
 						<li><b><a role="button" href="{% url 'finance' %} ">{% trans "Finance" %}</a></b></li>
 					</ul>
 				</div>
