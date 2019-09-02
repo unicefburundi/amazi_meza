@@ -4,7 +4,6 @@ from import_export.admin import ImportExportModelAdmin
 from leaflet.admin import LeafletGeoAdmin
 
 from django.contrib.gis.admin import OSMGeoAdmin
-from import_export.admin import ImportExportModelAdmin
 import ast
 
 

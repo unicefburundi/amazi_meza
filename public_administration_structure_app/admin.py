@@ -16,7 +16,18 @@ class CommuneAdmin(ImportExportModelAdmin):
 
 @admin.register(Colline)
 class CollineAdmin(ImportExportModelAdmin):
-    pass
+    list_display = ('code', 'name', 'get_commune_name', 'get_province_name')
+
+    def get_province_name(self, obj):
+        return obj.commune.province.name
+
+    def get_commune_name(self, obj):
+        return obj.commune.name
+
+    get_province_name.short_description = "Province"
+    get_commune_name.short_description = "Commune"
+
+    list_filter = ('commune__province__name', 'commune__name')
 
 
 @admin.register(SousColline)
