@@ -23,6 +23,7 @@
 			}
 		}
 
+
 		$(document).ready(function() {
 
 				var my_token = "{{ MAP_TOKEN }}";
@@ -35,20 +36,21 @@
 		var functional_water_points = {{ functional_water_points|geojsonfeature:"popupContent"|safe }};
 		var not_functional_water_points = {{ not_functional_water_points|geojsonfeature:"popupContent"|safe }};
 
+
 		all_water_points = L.geoJson(all_water_points, {onEachFeature: onEachFeature});
 		functional_water_points = L.geoJson(functional_water_points, {onEachFeature: onEachFeature});
 		not_functional_water_points = L.geoJson(not_functional_water_points, {onEachFeature: onEachFeature});
 
+
 		var map = L.map('map', {
 			center: [-3.5, 29.9],
 			zoom: 9,
-			layers: [streets, not_functional_water_points]
+			layers: [map3, not_functional_water_points]
 		});
 
 		var baseMaps = {
-			"Map 1": streets,
-			"Map 2": satellite,
-			"Map 3": map3
+			"Map view": map3,
+			"Satellite view": satellite,
 		};
 
 		var overlayMaps = {

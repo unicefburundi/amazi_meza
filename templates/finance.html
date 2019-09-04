@@ -55,11 +55,6 @@
         			$(this).remove();
         		}
 		    });
-		    /*$("#pbcolline option").each(function(){
-        		if ($(this).val()) {
-        			$(this).remove();
-        		}
-		    });*/
 
 			$('#div_tbl_loc_number_wp').empty();
 			$('#loc_number_of_wp_chart_container').empty();
@@ -68,12 +63,12 @@
 			$('#div_tbl_loc_inc').empty();
 			$('#div_chart_loc_inc').empty();
 			if (code) {
-				//initializesonic();
 				ajaxurl = 'getcommunesinprovince';
 	            data = JSON.stringify({ 'code': code });
-
 	            ajaxpostbackfunction = "fetchcommunes";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
@@ -83,44 +78,32 @@
         			$(this).remove();
         		}
 		    });
-		    /*$("#pbcolline option").each(function(){
-        		if ($(this).val()) {
-        			$(this).remove();
-        		}
-		    });*/
 
 			$('#div_chart_exp_in').empty();
 
 			if (code) {
-				//initializesonic();
 				ajaxurl = 'getcommunesinprovince';
 	            data = JSON.stringify({ 'code': code });
-
 	            ajaxpostbackfunction = "fetchcommunes2";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
 		function fetchCollines(code) {
-			/*$("#pbcolline option").each(function(){
-        		if ($(this).val()) {
-        			$(this).remove();
-        		}
-		    });*/
-
 			$('#div_fin_tbl').empty();
 			$('#div_tbl_loc_exp').empty();
 			$('#div_chart_loc_exp').empty();
 			$('#div_tbl_loc_inc').empty();
 			$('#div_chart_loc_inc').empty();
 			if (code) {
-				//initializesonic();
-
 				ajaxurl = 'getcollinesincommune';
 	            data = JSON.stringify({ 'code': code });
-
 	            ajaxpostbackfunction = "fetchcollines";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
@@ -141,11 +124,6 @@
 		    		var code = null;
 		    		var start_date = null;
 		    		var end_date = null;
-
-		    		/*if ($('#pbcolline').val() != "") {
-		    			level = "colline";
-		    			code = $('#pbcolline').val();
-		    		}*/
 	    			if($('#pbcommune').val() != ""){
 	    				level = "commune";
 	    				code = $('#pbcommune').val();
@@ -214,11 +192,7 @@
 		    			year = $('#div_year').val();
 		    		}
 
-
-
 					$('#div_chart_exp_vs_in').empty();
-
-
 
 		    		if (level && code && year) {
 				        data = JSON.stringify({ 'level': level, 'code': code, 'year': year});
@@ -267,24 +241,11 @@
 		                	for (i = 0; i < response.length; i++) {
 		                		var code = jQuery.makeArray(response[i].fields)[0].code;
 		                		var name = jQuery.makeArray(response[i].fields)[0].name;
-		                		
-		                		//$('#pbcolline').append('<option value=' + code +'>' + name + '</option>');
     						}
-    						// fetch wanted data
 		                	fetchwanteddata();
 		                } else if (ajaxpostbackfunction == "fetchwanteddata2"){
-
-		                	//incomes = JSON.parse(response.incomes);
-		                	console.log(response.incomes);
-		                	console.log(">>>>>>");
-		                	console.log(response.expenditure);
 		                	income = response.incomes
 		                	expenditure = response.expenditures
-
-
-
-
-
 
 		                	Highcharts.chart('div_chart_exp_vs_in', {
 							    chart: {
@@ -312,10 +273,6 @@
 							    series: [income, expenditure]
 							});
 
-
-
-
-
 		                }	else if (ajaxpostbackfunction == "fetchwanteddata") {
 		                	//if (response.rows.length > 0) {
 		                		$('#div_fin_tbl').append('<p><b>{% trans "EXPENDITURE PER CATEGORY" %}</b></p>' +
@@ -331,12 +288,8 @@
 									'<tbody>' +
 										
 									'</tbody>');
-								
-								//exp_reports = JSON.parse(response.exp_reports);
-								//exp_reports = exp_reports;
-								//console.log(response);
-								exp_reports = JSON.parse(response.rows);
 
+								exp_reports = JSON.parse(response.rows);
 
 								for (var i = 0; i < exp_reports.length; i++){
 									
@@ -366,15 +319,11 @@
 								        ]
 									});
 
-
-						        //var WaterPProblemCategories = data;
 						        var WaterPProblemCategories = response.data;
 
 								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
 
-						        //console.log(ReportedWPProblemsCategories);
-
-						         Highcharts.chart('div_container_pchart', {
+						        Highcharts.chart('div_container_pchart', {
 							        chart: {
 							            plotBackgroundColor: null,
 							            plotBorderWidth: null,
@@ -408,7 +357,6 @@
 							    });
 
 		                	location_expenditure = response.location_expendi;
-		                	//Table first
 		                	$('#div_tbl_loc_exp').append('<p><b>{% trans "COMMUNE BY EXPENDITURE" %}</b></p>' +
 
 									'<div style="clear:both; height:10px;"></div>' +
@@ -685,12 +633,6 @@
 		<hr>
 
 		<div class="form-inline" style="padding-left :5px; padding-right :5px;">
-			<!--<div class="form-group">
-				<label for="div_province_2">{% trans "Province:" %}</label>
-				<select id="div_province_2" class="form-control" style="width:140px" onchange="fetchCommunes2(this.value)" required="required">
-					<option value="" selected="selected">[ {% trans "Select Province" %} ]</option>
-				</select>
-			</div>-->
 			<div class="form-group">
 				<label for="pbcommune_2">{% trans "Commune:" %}</label>
 				<select id="pbcommune_2" class="form-control" style="width:140px" onchange="fetchwanteddata2(this.value)" required="required">
@@ -704,11 +646,9 @@
 				</select>
 			</div>
 		</div>
-
 		<div id="div_chart_exp_vs_in" style="margin: 0 auto">
 			<b>Select a commune and a year to display Income vs. Expenditure</b>
 		</div>
-
 	</div>
 
 

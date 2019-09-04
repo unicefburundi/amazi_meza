@@ -61,13 +61,13 @@
 			$('#loc_number_of_wp_chart_container').empty();
 
 			if (code) {
-				//initializesonic();
-
 				ajaxurl = 'getcommunesinprovince';
 	            data = JSON.stringify({ 'code': code });
 
 	            ajaxpostbackfunction = "fetchcommunes";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
@@ -89,6 +89,8 @@
 
 	            ajaxpostbackfunction = "fetchcollines";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
@@ -288,12 +290,6 @@
 									  }
 								});
 								
-
-
-
-		                	/*}else {
-		                		$('#divpb').append('<p style="color:red;">No records found</p>');
-		                	}*/
 		                }
 
 		                $('#overlay').remove();
@@ -319,18 +315,6 @@
 		        return false;
 		    }
 
-
-
-		    var collection = {{ all_water_points|geojsonfeature:"popupContent"|safe }};
-				  function onEachFeature(feature, layer) {
-				    if (feature.properties && feature.properties.popupContent) {
-				      layer.bindPopup(feature.properties.popupContent);
-				    }
-				  }
-				  function map_init_basic(map, options) {
-					L.geoJson(collection, {onEachFeature: onEachFeature}).addTo(map);
-				  }
-
 		</script>
 {% endblock %}
 
@@ -338,20 +322,6 @@
 
 
 {% block container %}
-			<!--<p>
-				{{all_water_points}}
-			</p>-->
-
-			<p>
-			<div id="map1" style="margin: 0 auto">
-				
-				<!-- {% leaflet_map "map" callback="window.map_init_basic" %} -->
-
-			</div>
-			</p>
-
-			<br>
-
 			<div>
 				{% if msg %}
 					<div class="divmessage"><p>{{ msg }}</p></div>
@@ -392,13 +362,5 @@
 			<div id="div_tbl_loc_number_wp" class="form-inline" style="padding-left :5px; padding-right :5px;">
 
 			</div>
-
-			<script type="text/javascript">
-
-			
-
-			</script>
-
-			
-			
+					
 {% endblock %}

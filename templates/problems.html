@@ -46,13 +46,13 @@
 			$('#div_tbl_loc_number_wpp').empty();
 			$('#div_chart_loc_wpp').empty();
 			if (code) {
-				//initializesonic();
-
 				ajaxurl = 'getcollinesincommune';
 	            data = JSON.stringify({ 'code': code });
 
 	            ajaxpostbackfunction = "fetchcollines";
 	            ajaxpost(ajaxurl, data);
+	        }else{
+	        	fetchwanteddata();
 	        }
 		}
 
@@ -150,10 +150,8 @@
 									'<tbody>' +
 										
 									'</tbody>');
-								console.log(response)
 
 								problemReports = JSON.parse(response.rows);
-
 
 								for (var i = 0; i < problemReports.length; i++){
 									
@@ -190,9 +188,7 @@
 
 								ReportedWPProblemsCategories = JSON.parse(WaterPProblemCategories);
 
-						        console.log(ReportedWPProblemsCategories);
-
-						         Highcharts.chart('container', {
+						        Highcharts.chart('container', {
 							        chart: {
 							            plotBackgroundColor: null,
 							            plotBorderWidth: null,
