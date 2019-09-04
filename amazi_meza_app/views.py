@@ -136,7 +136,7 @@ def getwanteddata(request):
                 r["commune_name"] = concerned_w_s_endpoint.colline.commune.name
 
                 concerned_w_p_pbm_type = WaterPointProblemTypes.objects.get(id=r["problem"])
-                r["w_p_pbm_type_name"] = concerned_w_p_pbm_type.problem_type_name
+                r["w_p_pbm_type_name"] = concerned_w_p_pbm_type.problem_type_description
 
                 r["report_date"] = unicodedata.normalize('NFKD', r["report_date"]).encode('ascii','ignore')[0:10]
 
