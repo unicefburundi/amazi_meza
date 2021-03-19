@@ -1,5 +1,5 @@
 Django==1.9.8
-Jinja2==2.9.6
+Jinja2==2.11.3
 MarkupSafe==1.0
 Unidecode==0.04.21
 argparse==1.2.1
